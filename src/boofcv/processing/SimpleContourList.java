@@ -48,15 +48,16 @@ public class SimpleContourList {
 	 * @see boofcv.alg.shapes.ShapeFittingOps#fitPolygon(java.util.List, boolean, double, double, int)
 	 *
 	 * @param external true for the external contour or false for all the internal contours
-	 * @param toleranceDist Maximum distance away each point in the sequence can be from a line, in pixels.  Try 2.
-	 * @param toleranceAngle Tolerance for fitting angles, in radians. Try 0.1
+	 * @param splitFraction A line will be split if a point is more than this fraction of its
+	 *                     length away from the line. Try 0.05
+	 * @param minimumSideFraction The minimum allowed side length as a function of contour length.
 	 * @return List of polygons described by their vertexes
 	 */
-	public List<List<Point2D_I32>> fitPolygons( boolean external , double toleranceDist, double toleranceAngle ) {
+	public List<List<Point2D_I32>> fitPolygons( boolean external , double splitFraction, double minimumSideFraction ) {
 		List<List<Point2D_I32>> polygons = new ArrayList<List<Point2D_I32>>();
 
 		for (int i = 0; i < contour.size(); i++) {
-			polygons.addAll(contour.get(i).fitPolygon(external,toleranceDist,toleranceAngle));
+			polygons.addAll(contour.get(i).fitPolygon(external,splitFraction,minimumSideFraction));
 		}
 
 		return polygons;

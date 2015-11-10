@@ -26,12 +26,13 @@ import georegression.struct.se.Se3_F64;
  * @author Peter Abeles
  */
 public class FiducialFound {
-	int id;
+	long id;
 	double width;
 	Se3_F64 pose;
 
-	public FiducialFound(int id, double width, Se3_F64 pose) {
+	public FiducialFound(long id, double width, Se3_F64 pose) {
 		this.id = id;
+		this.width =width;
 		this.pose = pose;
 	}
 
@@ -39,7 +40,7 @@ public class FiducialFound {
 		return width;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

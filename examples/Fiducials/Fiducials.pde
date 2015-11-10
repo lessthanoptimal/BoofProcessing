@@ -15,7 +15,7 @@ void setup() {
 
   // Robust fiducial detectors are invariant to lightning conditions, while the other is much faster
   // but is much more brittle
-  detector = Boof.fiducialSquareBinaryRobust(0.1,4);
+  detector = Boof.fiducialSquareBinaryRobust(0.1);
   //detector = Boof.fiducialSquareBinary(0.1,100);
 
   // Much better results if you calibrate the camera.

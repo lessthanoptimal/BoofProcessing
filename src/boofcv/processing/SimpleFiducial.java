@@ -22,7 +22,6 @@ import boofcv.abst.fiducial.FiducialDetector;
 import boofcv.alg.geo.PerspectiveOps;
 import boofcv.struct.calib.IntrinsicParameters;
 import boofcv.struct.image.ImageBase;
-import georegression.metric.UtilAngle;
 import georegression.struct.point.Point2D_F64;
 import georegression.struct.point.Point2D_I32;
 import georegression.struct.point.Point3D_F64;
@@ -56,15 +55,7 @@ public class SimpleFiducial {
 	}
 
 	public void guessCrappyIntrinsic( int width , int height ) {
-		IntrinsicParameters param = new IntrinsicParameters();
-
-		param.width = width; param.height = height;
-		param.cx = width/2;
-		param.cy = height/2;
-		param.fx = param.cx/Math.tan(UtilAngle.degreeToRadian(30)); // assume 60 degree FOV
-		param.fy = param.cx/Math.tan(UtilAngle.degreeToRadian(30));
-
-		setIntrinsic(param);
+		setIntrinsic(PerspectiveOps.createIntrinsic(width,height,40));
 	}
 
 	public List<FiducialFound> detect( PImage image ) {
@@ -75,7 +66,7 @@ public class SimpleFiducial {
 		List<FiducialFound> found = new ArrayList<FiducialFound>();
 		for (int i = 0; i < detector.totalFound(); i++) {
 
-			int id = detector.getId(i);
+			long id = detector.getId(i);
 			double width = detector.getWidth(i);
 			Se3_F64 fiducialToWorld = new Se3_F64();
 			detector.getFiducialToCamera(i, fiducialToWorld);

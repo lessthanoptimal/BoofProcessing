@@ -39,6 +39,8 @@ import boofcv.factory.feature.tracker.FactoryPointTracker;
 import boofcv.factory.fiducial.ConfigFiducialBinary;
 import boofcv.factory.fiducial.ConfigFiducialImage;
 import boofcv.factory.fiducial.FactoryFiducial;
+import boofcv.factory.filter.binary.ConfigThreshold;
+import boofcv.factory.filter.binary.ThresholdType;
 import boofcv.factory.flow.ConfigHornSchunck;
 import boofcv.factory.flow.ConfigHornSchunckPyramid;
 import boofcv.factory.flow.ConfigOpticalFlowBlockPyramid;
@@ -270,19 +272,18 @@ public class Boof {
 	 * Creates a square-binary fiducial detector which is light invariant.
 	 *
 	 * @param width Width of square in world units
-	 * @param radius Radius of adaptive region
 	 */
-	public static SimpleFiducial fiducialSquareBinaryRobust( double width , int radius ) {
-		return new SimpleFiducial(FactoryFiducial.squareBinaryRobust(new ConfigFiducialBinary(width),radius,ImageUInt8.class));
+	public static SimpleFiducial fiducialSquareBinaryRobust( double width  ) {
+		return new SimpleFiducial(FactoryFiducial.squareBinary(new ConfigFiducialBinary(width),
+				ConfigThreshold.local(ThresholdType.LOCAL_SQUARE, 15), ImageUInt8.class));
 	}
 
 	/**
 	 * Creates a square-binary fiducial detector which is light invariant.
-	 *
-	 * @param radius Radius of adaptive region
 	 */
-	public static SimpleFiducialSquareImage fiducialSquareImageRobust( int radius ) {
-		return new SimpleFiducialSquareImage(FactoryFiducial.squareImageRobust(new ConfigFiducialImage(), radius, ImageUInt8.class));
+	public static SimpleFiducialSquareImage fiducialSquareImageRobust() {
+		return new SimpleFiducialSquareImage(FactoryFiducial.squareImage(new ConfigFiducialImage(),
+				ConfigThreshold.local(ThresholdType.LOCAL_SQUARE,15), ImageUInt8.class));
 	}
 
 	/**
@@ -292,17 +293,18 @@ public class Boof {
 	 * @param threshold Binary threshold
 	 */
 	public static SimpleFiducial fiducialSquareBinary( double width , int threshold ) {
-		return new SimpleFiducial(FactoryFiducial.squareBinaryFast(new ConfigFiducialBinary(width), threshold, ImageUInt8.class));
+		return new SimpleFiducial(FactoryFiducial.squareBinary(new ConfigFiducialBinary(width),
+				ConfigThreshold.fixed(threshold), ImageUInt8.class));
 	}
 
 	/**
 	 * Creates a square-binary fiducial detector
 	 *
-	 * @param width Width of square in world units
 	 * @param threshold Binary threshold
 	 */
-	public static SimpleFiducialSquareImage fiducialSquareImage( double width , int threshold ) {
-		return new SimpleFiducialSquareImage(FactoryFiducial.squareImageFast(new ConfigFiducialImage(), threshold, ImageUInt8.class));
+	public static SimpleFiducialSquareImage fiducialSquareImage( int threshold ) {
+		return new SimpleFiducialSquareImage(FactoryFiducial.squareImage(new ConfigFiducialImage(),
+				ConfigThreshold.fixed(threshold), ImageUInt8.class));
 	}
 
 }

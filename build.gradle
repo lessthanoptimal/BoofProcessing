@@ -15,16 +15,24 @@ repositories {
     }
 }
 
+if( !file('./core.jar').exists()) {
+    logger.warn("Can't find core.jar.  See README.MD for instruction on how to fix this")
+}
+
 configurations {
     processing
     compile.extendsFrom processing
 }
 
-
 dependencies {
     compile group: 'org.boofcv', name: 'all', version: '0.20'
 
     processing files("core.jar")
+}
+
+test {
+    ignoreFailures true
+    reports.html.enabled = true
 }
 
 sourceSets {
@@ -79,6 +87,7 @@ task processingJavaDoc(type: Javadoc) {
 
     // provide references to external javadoc
     configure(options) {
+        failOnError = false
         links = ['http://docs.oracle.com/javase/7/docs/api/',
                  'http://ejml.org/javadoc/',
                  'http://georegression.org/javadoc/',
