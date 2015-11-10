@@ -29,7 +29,7 @@ void setup() {
   flow.process(input0, input1);
   outputFlow = flow.visualizeFlow();
 
-  size(input0.width*2, input0.height);
+  surface.setSize(input0.width*2, input0.height);
 }
 
 void draw() {

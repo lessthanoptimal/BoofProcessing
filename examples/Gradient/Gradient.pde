@@ -23,7 +23,7 @@ void setup() {
   // visualize the data for the y-derivative
   img3 = gradient.dy().visualizeSign();
 
-  size(input.width, input.height);
+  surface.setSize(input.width, input.height);
 }
 
 void draw() {

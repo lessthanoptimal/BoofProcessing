@@ -22,7 +22,7 @@ void setup() {
   sharp4 = gray.enhanceSharpen4().convert();
   sharp8 = gray.enhanceSharpen8().convert();
 
-  size(input.width*2, input.height);
+  surface.setSize(input.width*2, input.height);
 }
 
 int which = 0;

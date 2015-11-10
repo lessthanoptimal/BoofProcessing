@@ -44,7 +44,7 @@ void setup() {
   assoc.associate(descs0,descs1);
   matches = assoc.getMatches();
 
-  size(input0.width*2, input0.height);
+  surface.setSize(input0.width*2, input0.height);
 }
 
 void draw() {

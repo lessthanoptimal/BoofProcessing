@@ -27,7 +27,7 @@ void setup() {
   external = contours.fitEllipses(true);
   internal = contours.fitEllipses(false);
 
-  size(input.width, input.height);
+  surface.setSize(input.width, input.height);
 }
 
 void draw() {

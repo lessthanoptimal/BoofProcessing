@@ -11,7 +11,7 @@ SimpleFiducial detector;
 void setup() {
   // Open up the camera so that it has a video feed to process
   initializeCamera(640, 480);
-  size(cam.width, cam.height);
+  surface.setSize(cam.width, cam.height);
 
   // Robust fiducial detectors are invariant to lightning conditions, while the other is much faster
   // but is much more brittle

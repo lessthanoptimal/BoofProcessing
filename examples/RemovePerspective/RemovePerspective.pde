@@ -20,7 +20,7 @@ void setup() {
   undistorted = image.removePerspective(outWidth,outHeight,
     267,182,  542,68,  519,736,  276,570).convert();
 
-  size(input.width + undistorted.width, input.height);
+  surface.setSize(input.width + undistorted.width, input.height);
 }
 
 void draw() {

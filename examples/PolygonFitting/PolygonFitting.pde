@@ -36,7 +36,7 @@ void setup() {
   // Fit polygons to external contours
   polygons = contours.fitPolygons(true, 0.05, 0.01);
 
-  size(input.width, input.height);
+  surface.setSize(input.width, input.height);
 }
 
 void draw() {

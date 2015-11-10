@@ -13,6 +13,9 @@ The 'core.jar' file can be found in your Processing installation at process-XXX/
 installed version of processing.  Unfortunately there is no officially supported version of Processing on Maven
 central so it cannot be automatically installed.  Which is why you have to do this manual hackery.
 
+To run the examples you will need to install the Video library.  This is done through the usual means.  In your sketchbook
+select Sketch->"Import Library..." then search for "Video" and install it.
+
 # Building
 
 Once you have 'core.jar' you can then run the Gradle build script. It should work with zero issues because it downloads

@@ -26,7 +26,7 @@ void setup() {
   linesFoot = gray.linesHoughFoot(new ConfigHoughFoot(maxLines));
   linesFootSub = gray.linesHoughFootSub(new ConfigHoughFootSubimage(maxLines));
 
-  size(input.width, input.height);
+  surface.setSize(input.width, input.height);
 }
 
 int which = 0;

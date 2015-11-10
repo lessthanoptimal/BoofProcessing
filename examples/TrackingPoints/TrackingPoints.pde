@@ -15,7 +15,7 @@ int target = 100;
 void setup() {
   // Open up the camera so that it has a video feed to process
   initializeCamera(320,240);
-  size(cam.width, cam.height);
+  surface.setSize(cam.width, cam.height);
 
   ConfigGeneralDetector confDetector = new ConfigGeneralDetector();
   confDetector.radius = 4;

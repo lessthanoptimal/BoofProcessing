@@ -20,7 +20,7 @@ void setup() {
   // The feature location and size is visualized later on
   ddp.process(input);
 
-  size(input.width, input.height);
+  surface.setSize(input.width, input.height);
 }
 
 void draw() {

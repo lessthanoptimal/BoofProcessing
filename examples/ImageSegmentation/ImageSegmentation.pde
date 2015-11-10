@@ -27,7 +27,7 @@ void setup() {
   // visualize the results
   visualized = segmentator.getOutput().visualize();
 
-  size(input.width, input.height);
+  surface.setSize(input.width, input.height);
 }
 
 void draw() {

@@ -23,7 +23,7 @@ int mode = 0;
 void setup() {
   // Open up the camera so that it has a video feed to process
   initializeCamera(320, 240);
-  size(cam.width, cam.height);
+  surface.setSize(cam.width, cam.height);
 
   // Select which tracker you want to use by uncommenting and commenting the lines below
   tracker = Boof.trackerCirculant(null, ImageDataType.F32);
