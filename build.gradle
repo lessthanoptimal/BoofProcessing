@@ -1,0 +1,204 @@
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.6
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+    maven {
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        url = "http://xuggle.googlecode.com/svn/trunk/repo/share/java/"
+    }
+}
+
+configurations {
+    processing
+    compile.extendsFrom processing
+}
+
+
+dependencies {
+    compile group: 'org.boofcv', name: 'all', version: '0.20'
+
+    processing files("core.jar")
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+        resources {
+            srcDir 'resources/src'
+        }
+    }
+
+    test {
+        java {
+            srcDir 'test'
+            srcDir 'generate'
+            srcDir 'benchmark'
+        }
+        resources {
+            srcDir 'resources/test'
+        }
+    }
+}
+
+
+task dependenciesJar(type: Jar, dependsOn:jar) {
+
+    dependsOn configurations.runtime
+    from {
+        (configurations.runtime - configurations.processing).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    destinationDir = file('./')
+    archiveName = 'boofcv_dependencies.jar'
+}
+
+task processingJar(type: Jar, dependsOn:jar ) {
+
+    dependsOn dependenciesJar
+
+    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+
+    destinationDir = file('./')
+    archiveName = 'boofcv_processing.jar'
+}
+
+task processingJavaDoc(type: Javadoc) {
+    source = sourceSets.main.allJava
+
+    // provide references to external javadoc
+    configure(options) {
+        links = ['http://docs.oracle.com/javase/7/docs/api/',
+                 'http://ejml.org/javadoc/',
+                 'http://georegression.org/javadoc/',
+                 'http://ddogleg.org/javadoc/',
+                 'http://boofcv.org/javadoc/',
+                 'http://processing.org/reference/javadoc/core/']
+    }
+}
+
+task processingDirectory( dependsOn:[processingJar,processingJavaDoc]) {
+
+    file('tmp').deleteDir()
+    file('tmp/boofcv_processing').mkdirs()
+    file('tmp/boofcv_processing/reference').mkdirs()
+    file('tmp/boofcv_processing/src').mkdir()
+    file('tmp/boofcv_processing/examples').mkdir()
+    file('tmp/boofcv_processing/data').mkdir()
+    file('tmp/boofcv_processing/library').mkdir()
+
+    doLast {
+        copy {
+            from 'examples'
+            into 'tmp/boofcv_processing/examples'
+        }
+        copy {
+            from 'data/example/particles01.jpg'
+            into 'tmp/boofcv_processing/examples/Contours'
+        }
+        copy {
+            from 'data/example/simple_objects.jpg'
+            into 'tmp/boofcv_processing/examples/Gradient'
+        }
+        copy {
+            from 'data/example/simple_objects.jpg'
+            into 'tmp/boofcv_processing/examples/PolygonFitting'
+        }
+        copy {
+            from 'data/example/shapes/shapes02.png'
+            into 'tmp/boofcv_processing/examples/EllipseFitting'
+        }
+        copy {
+            from 'data/example/segment/berkeley_horses.jpg'
+            into 'tmp/boofcv_processing/examples/ImageSegmentation'
+        }
+        copy {
+            from 'data/example/denseflow/Urban2_07.png'
+            into 'tmp/boofcv_processing/examples/DenseOpticalFlow'
+        }
+        copy {
+            from 'data/example/denseflow/Urban2_08.png'
+            into 'tmp/boofcv_processing/examples/DenseOpticalFlow'
+        }
+
+        copy {
+            from 'data/example/cave_01.jpg'
+            into 'tmp/boofcv_processing/examples/AssociateInterestPoints'
+        }
+        copy {
+            from 'data/example/cave_02.jpg'
+            into 'tmp/boofcv_processing/examples/AssociateInterestPoints'
+        }
+
+        copy {
+            from 'data/example/kayak_02.jpg'
+            into 'tmp/boofcv_processing/examples/DetectInterestPoints'
+        }
+
+        copy {
+            from 'data/example/enhance/dark.png'
+            into 'tmp/boofcv_processing/examples/ImageEnhancement'
+        }
+
+        copy {
+            from 'data/example/simple_objects.jpg'
+            into 'tmp/boofcv_processing/examples/DetectLines'
+        }
+
+        copy {
+            from 'data/example/goals_and_stuff.jpg'
+            into 'tmp/boofcv_processing/examples/RemovePerspective'
+        }
+
+        copy {
+            from javadoc.destinationDir
+            into 'tmp/boofcv_processing/reference'
+        }
+        copy {
+            from 'src'
+            into 'tmp/boofcv_processing/src'
+        }
+        copy {
+            from 'library.properties'
+            into 'tmp/boofcv_processing'
+        }
+        copy {
+            from 'boofcv_dependencies.jar'
+            into 'tmp/boofcv_processing/library'
+        }
+        copy {
+            from 'boofcv_processing.jar'
+            into 'tmp/boofcv_processing/library'
+        }
+    }
+}
+
+task processingZip( type: Zip, dependsOn:processingDirectory) {
+    from 'tmp'
+
+    destinationDir = file('./')
+    archiveName = 'boofcv_processing.zip'
+}
+
+idea {
+    project {
+        jdkName = '1.6 (64bit)'
+        languageLevel = '1.6'
+    }
+
+    module {
+        name = "BoofProcessing"
+    }
+}
+
