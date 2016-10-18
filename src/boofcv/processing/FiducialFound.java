@@ -18,6 +18,7 @@
 
 package boofcv.processing;
 
+import georegression.struct.point.Point2D_F64;
 import georegression.struct.se.Se3_F64;
 
 /**
@@ -28,12 +29,14 @@ import georegression.struct.se.Se3_F64;
 public class FiducialFound {
 	long id;
 	double width;
-	Se3_F64 pose;
+	Se3_F64 fidToCam;
+	Point2D_F64 imageLocation;
 
-	public FiducialFound(long id, double width, Se3_F64 pose) {
+	public FiducialFound(long id, double width, Point2D_F64 imageLocation, Se3_F64 fidToCam) {
 		this.id = id;
 		this.width =width;
-		this.pose = pose;
+		this.fidToCam = fidToCam;
+		this.imageLocation = imageLocation;
 	}
 
 	public double getWidth() {
@@ -45,6 +48,10 @@ public class FiducialFound {
 	}
 
 	public Se3_F64 getFiducialToCamera() {
-		return pose;
+		return fidToCam;
+	}
+
+	public Point2D_F64 getImageLocation() {
+		return imageLocation;
 	}
 }

@@ -21,8 +21,8 @@ package boofcv.processing;
 import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.Contour;
 import boofcv.struct.ConnectRule;
-import boofcv.struct.image.ImageSInt32;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayS32;
+import boofcv.struct.image.GrayU8;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -34,68 +34,68 @@ import java.util.List;
  * @author Peter Abeles
  */
 public class SimpleBinary {
-	ImageUInt8 image;
+	GrayU8 image;
 
-	public SimpleBinary(ImageUInt8 image) {
+	public SimpleBinary(GrayU8 image) {
 		this.image = image;
 	}
 
 	public SimpleBinary logicAnd( SimpleBinary imgB ) {
-		ImageUInt8 out = new ImageUInt8(image.width, image.height);
+		GrayU8 out = new GrayU8(image.width, image.height);
 		BinaryImageOps.logicAnd(image, imgB.image, out);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary logicOr( SimpleBinary imgB ) {
-		ImageUInt8 out = new ImageUInt8(image.width, image.height);
+		GrayU8 out = new GrayU8(image.width, image.height);
 		BinaryImageOps.logicOr(image,imgB.image,out);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary logicXor( SimpleBinary imgB ) {
-		ImageUInt8 out = new ImageUInt8(image.width, image.height);
+		GrayU8 out = new GrayU8(image.width, image.height);
 		BinaryImageOps.logicXor(image,imgB.image,out);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary erode4( int numTimes ) {
-		ImageUInt8 out = new ImageUInt8(image.width, image.height);
+		GrayU8 out = new GrayU8(image.width, image.height);
 		BinaryImageOps.erode4(image,numTimes,out);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary erode8( int numTimes ) {
-		ImageUInt8 out = new ImageUInt8(image.width, image.height);
+		GrayU8 out = new GrayU8(image.width, image.height);
 		BinaryImageOps.erode8(image,numTimes,out);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary dilate4( int numTimes ) {
-		ImageUInt8 out = new ImageUInt8(image.width, image.height);
+		GrayU8 out = new GrayU8(image.width, image.height);
 		BinaryImageOps.dilate4(image,numTimes,out);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary dilate8( int numTimes ) {
-		ImageUInt8 out = new ImageUInt8(image.width, image.height);
+		GrayU8 out = new GrayU8(image.width, image.height);
 		BinaryImageOps.dilate8(image,numTimes,out);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary edge4() {
-		ImageUInt8 out = new ImageUInt8(image.width,image.height);
+		GrayU8 out = new GrayU8(image.width,image.height);
 		BinaryImageOps.edge4(image,out);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary edge8() {
-		ImageUInt8 out = new ImageUInt8(image.width,image.height);
+		GrayU8 out = new GrayU8(image.width,image.height);
 		BinaryImageOps.edge8(image,out);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary removePointNoise() {
-		ImageUInt8 out = new ImageUInt8(image.width,image.height);
+		GrayU8 out = new GrayU8(image.width,image.height);
 		BinaryImageOps.removePointNoise(image, out);
 		return new SimpleBinary(out);
 	}
@@ -106,7 +106,7 @@ public class SimpleBinary {
 	 * @see BinaryImageOps#contour
 	 */
 	public ResultsBlob contour() {
-		ImageSInt32 labeled = new ImageSInt32(image.width,image.height);
+		GrayS32 labeled = new GrayS32(image.width,image.height);
 
 		List<Contour> contours = BinaryImageOps.contour(image, ConnectRule.EIGHT, labeled);
 
@@ -127,7 +127,7 @@ public class SimpleBinary {
 		return out;
 	}
 
-	public ImageUInt8 getImage() {
+	public GrayU8 getImage() {
 		return image;
 	}
 }

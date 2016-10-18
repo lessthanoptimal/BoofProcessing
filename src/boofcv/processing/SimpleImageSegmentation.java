@@ -20,8 +20,8 @@ package boofcv.processing;
 
 import boofcv.abst.segmentation.ImageSuperpixels;
 import boofcv.struct.ConnectRule;
+import boofcv.struct.image.GrayS32;
 import boofcv.struct.image.ImageBase;
-import boofcv.struct.image.ImageSInt32;
 import processing.core.PImage;
 
 /**
@@ -31,7 +31,7 @@ import processing.core.PImage;
  */
 public class SimpleImageSegmentation {
 	ImageBase image;
-	SimpleLabeledImage output = new SimpleLabeledImage(new ImageSInt32(1,1));
+	SimpleLabeledImage output = new SimpleLabeledImage(new GrayS32(1,1));
 	ImageSuperpixels segmentation;
 
 	public SimpleImageSegmentation(ImageSuperpixels segmentation) {

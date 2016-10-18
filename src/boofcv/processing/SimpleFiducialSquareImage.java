@@ -19,7 +19,7 @@
 package boofcv.processing;
 
 import boofcv.abst.fiducial.SquareImage_to_FiducialDetector;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayU8;
 import processing.core.PImage;
 
 /**
@@ -44,7 +44,7 @@ public class SimpleFiducialSquareImage extends SimpleFiducial {
 	 * @param targetLength Length of a fiducial's side in world units
 	 */
 	public void addTarget( PImage image , double targetLength ) {
-		ImageUInt8 gray = new ImageUInt8(image.width,image.height);
+		GrayU8 gray = new GrayU8(image.width,image.height);
 		ConvertProcessing.convertFromRGB(image,gray);
 		detector.addPatternImage(gray, targetLength, 125);
 	}

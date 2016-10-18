@@ -21,9 +21,9 @@ package boofcv.processing;
 import boofcv.abst.feature.tracker.PointTrack;
 import boofcv.abst.feature.tracker.PointTracker;
 import boofcv.core.image.GeneralizedImageOps;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageSingleBand;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.ImageGray;
 import georegression.struct.point.Point2D_F64;
 import processing.core.PImage;
 
@@ -39,7 +39,7 @@ public class SimpleTrackerPoints {
 	PointTracker tracker;
 	List<PointTrack> list = new ArrayList<PointTrack>();
 	Class imageType;
-	ImageSingleBand gray;
+	ImageGray gray;
 
 	public SimpleTrackerPoints(PointTracker tracker, Class imageType) {
 
@@ -51,10 +51,10 @@ public class SimpleTrackerPoints {
 	public void process( PImage image) {
 		gray.reshape(image.width,image.height);
 
-		if( imageType == ImageFloat32.class ) {
-			ConvertProcessing.convert_RGB_F32(image,(ImageFloat32)gray);
-		} else if( imageType == ImageUInt8.class ) {
-			ConvertProcessing.convert_RGB_U8(image, (ImageUInt8) gray);
+		if( imageType == GrayF32.class ) {
+			ConvertProcessing.convert_RGB_F32(image,(GrayF32)gray);
+		} else if( imageType == GrayU8.class ) {
+			ConvertProcessing.convert_RGB_U8(image, (GrayU8) gray);
 		}
 
 		tracker.process(gray);

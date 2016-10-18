@@ -33,6 +33,11 @@ void draw() {
     image(cam, 0, 0);
 
     for( FiducialFound f : found ) {
+
+    //  println("ID             "+f.getId());
+    //  println("image location "+f.getImageLocation());
+    //  println("world location "+f.getFiducialToCamera().getT());
+
       detector.render(this,f);
     }
   }

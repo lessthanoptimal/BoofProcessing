@@ -45,9 +45,9 @@ public class SimpleGradient<T extends ImageBase> {
 	 * @see GGradientToEdgeFeatures#intensityAbs
 	 */
 	public SimpleGray intensityAbs() {
-		ImageFloat32 intensity = new ImageFloat32(dx.width,dx.height);
-		if( dx instanceof ImageSingleBand ) {
-			GGradientToEdgeFeatures.intensityAbs((ImageSingleBand)dx, (ImageSingleBand)dy, intensity);
+		GrayF32 intensity = new GrayF32(dx.width,dx.height);
+		if( dx instanceof ImageGray ) {
+			GGradientToEdgeFeatures.intensityAbs((ImageGray)dx, (ImageGray)dy, intensity);
 		} else {
 			throw new RuntimeException("Unknown image type");
 		}
@@ -58,9 +58,9 @@ public class SimpleGradient<T extends ImageBase> {
 	 * @see GGradientToEdgeFeatures#intensityE
 	 */
 	public SimpleGray intensityE() {
-		ImageFloat32 intensity = new ImageFloat32(dx.width,dx.height);
-		if( dx instanceof ImageSingleBand ) {
-			GGradientToEdgeFeatures.intensityE((ImageSingleBand) dx, (ImageSingleBand) dy, intensity);
+		GrayF32 intensity = new GrayF32(dx.width,dx.height);
+		if( dx instanceof ImageGray ) {
+			GGradientToEdgeFeatures.intensityE((ImageGray) dx, (ImageGray) dy, intensity);
 		} else {
 			throw new RuntimeException("Unknown image type");
 		}
@@ -71,9 +71,9 @@ public class SimpleGradient<T extends ImageBase> {
 	 * @see GGradientToEdgeFeatures#direction
 	 */
 	public SimpleGray direction() {
-		ImageFloat32 intensity = new ImageFloat32(dx.width,dx.height);
-		if( dx instanceof ImageSingleBand ) {
-			GGradientToEdgeFeatures.direction((ImageSingleBand) dx, (ImageSingleBand) dy, intensity);
+		GrayF32 intensity = new GrayF32(dx.width,dx.height);
+		if( dx instanceof ImageGray ) {
+			GGradientToEdgeFeatures.direction((ImageGray) dx, (ImageGray) dy, intensity);
 		} else {
 			throw new RuntimeException("Unknown image type");
 		}
@@ -84,9 +84,9 @@ public class SimpleGradient<T extends ImageBase> {
 	 * @see GGradientToEdgeFeatures#direction2
 	 */
 	public SimpleGray direction2() {
-		ImageFloat32 intensity = new ImageFloat32(dx.width,dx.height);
-		if( dx instanceof ImageSingleBand ) {
-			GGradientToEdgeFeatures.direction2((ImageSingleBand)dx, (ImageSingleBand)dy, intensity);
+		GrayF32 intensity = new GrayF32(dx.width,dx.height);
+		if( dx instanceof ImageGray ) {
+			GGradientToEdgeFeatures.direction2((ImageGray)dx, (ImageGray)dy, intensity);
 		} else {
 			throw new RuntimeException("Unknown image type");
 		}
@@ -94,10 +94,10 @@ public class SimpleGradient<T extends ImageBase> {
 	}
 
 	public PImage visualize() {
-		if( dx instanceof ImageSInt16 ) {
-			return VisualizeProcessing.gradient((ImageSInt16) dx, (ImageSInt16) dy);
-		} else if( dx instanceof ImageFloat32 ) {
-			return VisualizeProcessing.gradient((ImageFloat32) dx, (ImageFloat32) dy);
+		if( dx instanceof GrayS16 ) {
+			return VisualizeProcessing.gradient((GrayS16) dx, (GrayS16) dy);
+		} else if( dx instanceof GrayF32 ) {
+			return VisualizeProcessing.gradient((GrayF32) dx, (GrayF32) dy);
 		} else {
 			throw new RuntimeException("Unknown image type");
 		}
@@ -105,15 +105,15 @@ public class SimpleGradient<T extends ImageBase> {
 
 	public SimpleGray dx() {
 
-		if( dx instanceof ImageSingleBand )
-			return new SimpleGray((ImageSingleBand)dx);
+		if( dx instanceof ImageGray )
+			return new SimpleGray((ImageGray)dx);
 		throw new RuntimeException("Unknown image type");
 	}
 
 	public SimpleGray dy() {
 
-		if( dy instanceof ImageSingleBand )
-			return new SimpleGray((ImageSingleBand)dy);
+		if( dy instanceof ImageGray )
+			return new SimpleGray((ImageGray)dy);
 		throw new RuntimeException("Unknown image type");
 	}
 

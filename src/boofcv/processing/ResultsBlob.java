@@ -19,7 +19,7 @@
 package boofcv.processing;
 
 import boofcv.alg.filter.binary.Contour;
-import boofcv.struct.image.ImageSInt32;
+import boofcv.struct.image.GrayS32;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +32,9 @@ import java.util.List;
 public class ResultsBlob {
 
 	public List<Contour> contour;
-	public ImageSInt32 labeled;
+	public GrayS32 labeled;
 
-	public ResultsBlob(List<Contour> contour, ImageSInt32 labeled) {
+	public ResultsBlob(List<Contour> contour, GrayS32 labeled) {
 		this.contour = contour;
 		this.labeled = labeled;
 	}

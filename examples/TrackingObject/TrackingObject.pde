@@ -28,7 +28,7 @@ void setup() {
   // Select which tracker you want to use by uncommenting and commenting the lines below
   tracker = Boof.trackerCirculant(null, ImageDataType.F32);
 //    tracker = Boof.trackerTld(null,ImageDataType.F32);
-//    tracker = Boof.trackerMeanShiftComaniciu(null, ImageType.ms(3,ImageFloat32.class));
+//    tracker = Boof.trackerMeanShiftComaniciu(null, ImageType.ms(3,GrayF32.class));
 //    tracker = Boof.trackerSparseFlow(null, ImageDataType.F32);
 
   f = createFont("Arial", 32, true);

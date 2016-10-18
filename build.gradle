@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'maven'
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.7
 
 repositories {
     mavenCentral()
@@ -25,7 +25,7 @@ configurations {
 }
 
 dependencies {
-    compile group: 'org.boofcv', name: 'all', version: '0.20'
+    compile group: 'org.boofcv', name: 'core', version: '0.25-SNAPSHOT'
 
     processing files("core.jar")
 }
@@ -202,8 +202,8 @@ task processingZip( type: Zip, dependsOn:processingDirectory) {
 
 idea {
     project {
-        jdkName = '1.6 (64bit)'
-        languageLevel = '1.6'
+        jdkName = '1.7 (64bit)'
+        languageLevel = '1.7'
     }
 
     module {

@@ -19,8 +19,8 @@
 package boofcv.processing;
 
 import boofcv.alg.filter.binary.BinaryImageOps;
-import boofcv.struct.image.ImageSInt32;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayS32;
+import boofcv.struct.image.GrayU8;
 import processing.core.PImage;
 
 /**
@@ -28,20 +28,20 @@ import processing.core.PImage;
  *
  * @author Peter Abeles
  */
-public class SimpleLabeledImage extends SimpleImage<ImageSInt32> {
+public class SimpleLabeledImage extends SimpleImage<GrayS32> {
 
-	public SimpleLabeledImage(ImageSInt32 image) {
+	public SimpleLabeledImage(GrayS32 image) {
 		super(image);
 	}
 
 	public SimpleBinary convertBinary() {
-		ImageUInt8 binary = new ImageUInt8(image.width, image.height);
+		GrayU8 binary = new GrayU8(image.width, image.height);
 		BinaryImageOps.labelToBinary(image,binary);
 		return new SimpleBinary(binary);
 	}
 
 	public SimpleBinary convertBinary( boolean selectedBlobs[] ) {
-		ImageUInt8 binary = new ImageUInt8(image.width, image.height);
+		GrayU8 binary = new GrayU8(image.width, image.height);
 		BinaryImageOps.labelToBinary(image,binary,selectedBlobs);
 		return new SimpleBinary(binary);
 	}

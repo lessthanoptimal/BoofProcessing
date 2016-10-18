@@ -20,6 +20,7 @@ package boofcv.processing;
 
 import boofcv.abst.feature.associate.AssociateDescription;
 import boofcv.abst.feature.associate.ScoreAssociation;
+import boofcv.abst.feature.detdesc.ConfigCompleteSift;
 import boofcv.abst.feature.detdesc.DetectDescribePoint;
 import boofcv.abst.feature.detect.interest.ConfigGeneralDetector;
 import boofcv.abst.feature.tracker.PointTracker;
@@ -66,7 +67,7 @@ public class Boof {
 	 */
 	public static SimpleGray gray(PImage image, ImageDataType type) {
 		if (type == ImageDataType.F32) {
-			ImageFloat32 out = new ImageFloat32(image.width, image.height);
+			GrayF32 out = new GrayF32(image.width, image.height);
 
 			switch (image.format) {
 				case PConstants.RGB:
@@ -80,7 +81,7 @@ public class Boof {
 
 			return new SimpleGray(out);
 		} else if (type == ImageDataType.U8) {
-			ImageUInt8 out = new ImageUInt8(image.width, image.height);
+			GrayU8 out = new GrayU8(image.width, image.height);
 
 			switch (image.format) {
 				case PConstants.RGB:
@@ -106,8 +107,8 @@ public class Boof {
 	 */
 	public static SimpleColor colorMS(PImage image, ImageDataType type) {
 		if (type == ImageDataType.F32) {
-			MultiSpectral<ImageFloat32> out =
-					new MultiSpectral<ImageFloat32>(ImageFloat32.class, image.width, image.height, 3);
+			Planar<GrayF32> out =
+					new Planar<GrayF32>(GrayF32.class, image.width, image.height, 3);
 
 			switch (image.format) {
 				case PConstants.RGB:
@@ -121,8 +122,8 @@ public class Boof {
 
 			return new SimpleColor(out);
 		} else if (type == ImageDataType.U8) {
-			MultiSpectral<ImageUInt8> out =
-					new MultiSpectral<ImageUInt8>(ImageUInt8.class, image.width, image.height, 3);
+			Planar<GrayU8> out =
+					new Planar<GrayU8>(GrayU8.class, image.width, image.height, 3);
 
 			switch (image.format) {
 				case PConstants.RGB:
@@ -251,11 +252,11 @@ public class Boof {
 
 	public static SimpleDetectDescribePoint detectSift( ImageDataType imageType ) {
 		if( imageType != ImageDataType.F32 )
-			throw new IllegalArgumentException("Only ImageFloat32 is supported, e.g. ImageDataType.F32");
+			throw new IllegalArgumentException("Only GrayF32 is supported, e.g. ImageDataType.F32");
 
-		DetectDescribePoint ddp = FactoryDetectDescribe.sift(null,null,null,null);
+		DetectDescribePoint ddp = FactoryDetectDescribe.sift(new ConfigCompleteSift());
 
-		return new SimpleDetectDescribePoint(ddp, ImageType.single(ImageFloat32.class));
+		return new SimpleDetectDescribePoint(ddp, ImageType.single(GrayF32.class));
 	}
 
 	public static SimpleAssociateDescription associateGreedy( SimpleDetectDescribePoint detector ,
@@ -275,7 +276,7 @@ public class Boof {
 	 */
 	public static SimpleFiducial fiducialSquareBinaryRobust( double width  ) {
 		return new SimpleFiducial(FactoryFiducial.squareBinary(new ConfigFiducialBinary(width),
-				ConfigThreshold.local(ThresholdType.LOCAL_SQUARE, 15), ImageUInt8.class));
+				ConfigThreshold.local(ThresholdType.LOCAL_SQUARE, 15), GrayU8.class));
 	}
 
 	/**
@@ -283,7 +284,7 @@ public class Boof {
 	 */
 	public static SimpleFiducialSquareImage fiducialSquareImageRobust() {
 		return new SimpleFiducialSquareImage(FactoryFiducial.squareImage(new ConfigFiducialImage(),
-				ConfigThreshold.local(ThresholdType.LOCAL_SQUARE,15), ImageUInt8.class));
+				ConfigThreshold.local(ThresholdType.LOCAL_SQUARE,15), GrayU8.class));
 	}
 
 	/**
@@ -294,7 +295,7 @@ public class Boof {
 	 */
 	public static SimpleFiducial fiducialSquareBinary( double width , int threshold ) {
 		return new SimpleFiducial(FactoryFiducial.squareBinary(new ConfigFiducialBinary(width),
-				ConfigThreshold.fixed(threshold), ImageUInt8.class));
+				ConfigThreshold.fixed(threshold), GrayU8.class));
 	}
 
 	/**
@@ -304,7 +305,7 @@ public class Boof {
 	 */
 	public static SimpleFiducialSquareImage fiducialSquareImage( int threshold ) {
 		return new SimpleFiducialSquareImage(FactoryFiducial.squareImage(new ConfigFiducialImage(),
-				ConfigThreshold.fixed(threshold), ImageUInt8.class));
+				ConfigThreshold.fixed(threshold), GrayU8.class));
 	}
 
 }

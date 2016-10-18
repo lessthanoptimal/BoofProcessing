@@ -21,7 +21,7 @@ select Sketch->"Import Library..." then search for "Video" and install it.
 Once you have 'core.jar' you can then run the Gradle build script. It should work with zero issues because it downloads
 all the dependencies.  From the commandline you can run the Gradle script by typing
 
-```java
+```bash
 cd BoofProcessing
 gradle processingZip
 ```
@@ -38,7 +38,7 @@ Use the BoofCV forum to ask questions about this library.
 # Help Boof Processing!
 
 Boof Processing is in a maintenance mode right now.  Bugs will be fixed and rarely new features will be added.  It
-currenly only supports a few of the features in BoofCV and to reach its full potential really needs someone who can
+currently only supports a few of the features in BoofCV and to reach its full potential really needs someone who can
 give it more attention and is more familiar with Processing.
 
 So if you think you want to quickly add a new feature or fix a bug just fork the code and do it!  Just let me know

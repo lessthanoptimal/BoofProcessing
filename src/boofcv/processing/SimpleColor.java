@@ -29,10 +29,10 @@ import boofcv.core.image.GeneralizedImageOps;
 import boofcv.factory.geo.FactoryMultiView;
 import boofcv.struct.distort.PixelTransform_F32;
 import boofcv.struct.geo.AssociatedPair;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageSingleBand;
-import boofcv.struct.image.ImageUInt8;
-import boofcv.struct.image.MultiSpectral;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.ImageGray;
+import boofcv.struct.image.Planar;
 import georegression.struct.point.Point2D_F64;
 import org.ejml.data.DenseMatrix64F;
 import processing.core.PConstants;
@@ -46,9 +46,9 @@ import java.util.ArrayList;
  * @author Peter Abeles
  */
 @SuppressWarnings("unchecked")
-public class SimpleColor extends SimpleImage<MultiSpectral>{
+public class SimpleColor extends SimpleImage<Planar>{
 
-	public SimpleColor(MultiSpectral image) {
+	public SimpleColor(Planar image) {
 		super(image);
 	}
 
@@ -73,7 +73,7 @@ public class SimpleColor extends SimpleImage<MultiSpectral>{
 										 double x2, double y2,
 										 double x3, double y3 )
 	{
-		MultiSpectral output = (MultiSpectral)image._createNew(outWidth,outHeight);
+		Planar output = (Planar)image._createNew(outWidth,outHeight);
 
 		// Homography estimation algorithm.  Requires a minimum of 4 points
 		Estimate1ofEpipolar computeHomography = FactoryMultiView.computeHomography(true);
@@ -94,7 +94,7 @@ public class SimpleColor extends SimpleImage<MultiSpectral>{
 		PixelTransform_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
-		DistortImageOps.distortMS(image, output, pixelTransform, null, TypeInterpolate.BILINEAR);
+		DistortImageOps.distortPL(image, output, pixelTransform, null, TypeInterpolate.BILINEAR);
 
 		return new SimpleColor(output);
 	}
@@ -110,7 +110,7 @@ public class SimpleColor extends SimpleImage<MultiSpectral>{
 	 * Converts the color image into a gray scale image by averaged each pixel across the bands
 	 */
 	public SimpleGray grayMean() {
-		ImageSingleBand out =
+		ImageGray out =
 				GeneralizedImageOps.createSingleBand(image.imageType.getDataType(),image.width,image.height);
 
 		GConvertImage.average(image, out);
@@ -128,9 +128,9 @@ public class SimpleColor extends SimpleImage<MultiSpectral>{
 
 	public PImage convert() {
 		PImage out = new PImage(image.width,image.height, PConstants.RGB);
-		if( image.getBandType() == ImageFloat32.class) {
+		if( image.getBandType() == GrayF32.class) {
 			ConvertProcessing.convert_MSF32_RGB(image, out);
-		} else if( image.getBandType() == ImageUInt8.class ) {
+		} else if( image.getBandType() == GrayU8.class ) {
 			ConvertProcessing.convert_MSU8_RGB(image,out);
 		} else {
 			throw new RuntimeException("Unknown image type");

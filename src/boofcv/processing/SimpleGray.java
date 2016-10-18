@@ -42,10 +42,10 @@ import boofcv.factory.filter.derivative.FactoryDerivative;
 import boofcv.factory.geo.FactoryMultiView;
 import boofcv.struct.distort.PixelTransform_F32;
 import boofcv.struct.geo.AssociatedPair;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageInteger;
-import boofcv.struct.image.ImageSingleBand;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayI;
+import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.ImageGray;
 import georegression.struct.line.LineParametric2D_F32;
 import georegression.struct.point.Point2D_F64;
 import org.ejml.data.DenseMatrix64F;
@@ -61,9 +61,9 @@ import java.util.List;
  * @author Peter Abeles
  */
 @SuppressWarnings("unchecked")
-public class SimpleGray extends SimpleImage<ImageSingleBand>{
+public class SimpleGray extends SimpleImage<ImageGray>{
 
-	public SimpleGray(ImageSingleBand image) {
+	public SimpleGray(ImageGray image) {
 		super(image);
 	}
 
@@ -82,17 +82,17 @@ public class SimpleGray extends SimpleImage<ImageSingleBand>{
 	 * @return New SimpleGray after equalize histogram has been applied
 	 */
 	public SimpleGray histogramEqualize() {
-		if (!(image instanceof ImageUInt8))
-			throw new RuntimeException("Image must be of type ImageUInt8 to adjust its histogram");
+		if (!(image instanceof GrayU8))
+			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageUInt8 adjusted = new ImageUInt8(image.width, image.height);
+		GrayU8 adjusted = new GrayU8(image.width, image.height);
 
 		int histogram[] = new int[256];
 		int transform[] = new int[256];
 
-		ImageStatistics.histogram((ImageUInt8) image, histogram);
+		ImageStatistics.histogram((GrayU8) image, histogram);
 		EnhanceImageOps.equalize(histogram, transform);
-		EnhanceImageOps.applyTransform((ImageUInt8) image, transform, adjusted);
+		EnhanceImageOps.applyTransform((GrayU8) image, transform, adjusted);
 
 		return new SimpleGray(adjusted);
 	}
@@ -104,11 +104,11 @@ public class SimpleGray extends SimpleImage<ImageSingleBand>{
 	 * @return New SimpleGray after equalize histogram has been applied
 	 */
 	public SimpleGray histogramEqualizeLocal( int radius ) {
-		if (!(image instanceof ImageUInt8))
-			throw new RuntimeException("Image must be of type ImageUInt8 to adjust its histogram");
+		if (!(image instanceof GrayU8))
+			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageUInt8 adjusted = new ImageUInt8(image.width, image.height);
-		EnhanceImageOps.equalizeLocal((ImageUInt8) image, radius, adjusted, new int[256], new int[256]);
+		GrayU8 adjusted = new GrayU8(image.width, image.height);
+		EnhanceImageOps.equalizeLocal((GrayU8) image, radius, adjusted, new int[256], new int[256]);
 
 		return new SimpleGray(adjusted);
 	}
@@ -121,10 +121,10 @@ public class SimpleGray extends SimpleImage<ImageSingleBand>{
 	 * @return New SimpleGray
 	 */
 	public SimpleGray enhanceSharpen4() {
-		if (!(image instanceof ImageUInt8))
-			throw new RuntimeException("Image must be of type ImageUInt8 to adjust its histogram");
+		if (!(image instanceof GrayU8))
+			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageSingleBand adjusted = (ImageSingleBand)image._createNew(image.width, image.height);
+		ImageGray adjusted = (ImageGray)image._createNew(image.width, image.height);
 		GEnhanceImageOps.sharpen4(image, adjusted);
 
 		return new SimpleGray(adjusted);
@@ -138,10 +138,10 @@ public class SimpleGray extends SimpleImage<ImageSingleBand>{
 	 * @return New SimpleGray
 	 */
 	public SimpleGray enhanceSharpen8() {
-		if (!(image instanceof ImageUInt8))
-			throw new RuntimeException("Image must be of type ImageUInt8 to adjust its histogram");
+		if (!(image instanceof GrayU8))
+			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageSingleBand adjusted = (ImageSingleBand)image._createNew(image.width, image.height);
+		ImageGray adjusted = (ImageGray)image._createNew(image.width, image.height);
 		GEnhanceImageOps.sharpen8(image, adjusted);
 
 		return new SimpleGray(adjusted);
@@ -181,7 +181,7 @@ public class SimpleGray extends SimpleImage<ImageSingleBand>{
 										 double x2, double y2,
 										 double x3, double y3 )
 	{
-		ImageSingleBand output = (ImageSingleBand)image._createNew(outWidth,outHeight);
+		ImageGray output = (ImageGray)image._createNew(outWidth,outHeight);
 
 		// Homography estimation algorithm.  Requires a minimum of 4 points
 		Estimate1ofEpipolar computeHomography = FactoryMultiView.computeHomography(true);
@@ -317,12 +317,12 @@ public class SimpleGray extends SimpleImage<ImageSingleBand>{
 	}
 
 	public PImage visualizeSign() {
-		if( image instanceof ImageFloat32) {
-			float max = ImageStatistics.maxAbs((ImageFloat32) image);
-			return VisualizeProcessing.colorizeSign((ImageFloat32)image,max);
-		} else if( image instanceof ImageInteger) {
+		if( image instanceof GrayF32) {
+			float max = ImageStatistics.maxAbs((GrayF32) image);
+			return VisualizeProcessing.colorizeSign((GrayF32)image,max);
+		} else if( image instanceof GrayI) {
 			int max = (int)GImageStatistics.maxAbs(image);
-			return VisualizeProcessing.colorizeSign((ImageInteger) image, max);
+			return VisualizeProcessing.colorizeSign((GrayI) image, max);
 		} else {
 			throw new RuntimeException("Unknown image type");
 		}
@@ -330,10 +330,10 @@ public class SimpleGray extends SimpleImage<ImageSingleBand>{
 
 	public PImage convert() {
 		PImage out = new PImage(image.width,image.height, PConstants.RGB);
-		if( image instanceof ImageFloat32) {
-			ConvertProcessing.convert_F32_RGB((ImageFloat32)image,out);
-		} else if( image instanceof ImageUInt8 ) {
-			ConvertProcessing.convert_U8_RGB((ImageUInt8) image, out);
+		if( image instanceof GrayF32) {
+			ConvertProcessing.convert_F32_RGB((GrayF32)image,out);
+		} else if( image instanceof GrayU8 ) {
+			ConvertProcessing.convert_U8_RGB((GrayU8) image, out);
 		} else {
 			throw new RuntimeException("Unknown image type");
 		}
@@ -341,25 +341,25 @@ public class SimpleGray extends SimpleImage<ImageSingleBand>{
 	}
 
 	/**
-	 * Converts the internal image type into {@link ImageFloat32}.
+	 * Converts the internal image type into {@link GrayF32}.
 	 */
 	public void convertToF32() {
-		if( image instanceof ImageFloat32 )
+		if( image instanceof GrayF32 )
 			return;
 
-		ImageFloat32 a = new ImageFloat32(image.width,image.height);
+		GrayF32 a = new GrayF32(image.width,image.height);
 		GConvertImage.convert(image,a);
 		image = a;
 	}
 
 	/**
-	 * Converts the internal image type into {@link ImageUInt8}.
+	 * Converts the internal image type into {@link GrayU8}.
 	 */
 	public void convertToU8() {
-		if( image instanceof ImageUInt8 )
+		if( image instanceof GrayU8 )
 			return;
 
-		ImageUInt8 a = new ImageUInt8(image.width,image.height);
+		GrayU8 a = new GrayU8(image.width,image.height);
 		GConvertImage.convert(image,a);
 		image = a;
 	}

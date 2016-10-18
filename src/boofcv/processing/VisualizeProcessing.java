@@ -20,10 +20,10 @@ package boofcv.processing;
 
 import boofcv.alg.misc.ImageStatistics;
 import boofcv.struct.flow.ImageFlow;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageInteger;
-import boofcv.struct.image.ImageSInt16;
-import boofcv.struct.image.ImageSInt32;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayI;
+import boofcv.struct.image.GrayS16;
+import boofcv.struct.image.GrayS32;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -41,7 +41,7 @@ public class VisualizeProcessing {
 	 * @param image Labeled input image
 	 * @return Rendered color output image
 	 */
-	public static PImage labeled( ImageSInt32 image ) {
+	public static PImage labeled( GrayS32 image ) {
 
 		int numRegions = ImageStatistics.max(image)+1;
 
@@ -64,7 +64,7 @@ public class VisualizeProcessing {
 	 * @param maxAbsValue The maximum absolute value of the image.
 	 * @return Visualized image.
 	 */
-	public static PImage colorizeSign(ImageFloat32 src, float maxAbsValue) {
+	public static PImage colorizeSign(GrayF32 src, float maxAbsValue) {
 		PImage out = new PImage(src.width, src.height, PConstants.RGB);
 
 		int indexOut = 0;
@@ -93,7 +93,7 @@ public class VisualizeProcessing {
 	 * @param maxAbsValue The maximum absolute value of the image.
 	 * @return Visualized image.
 	 */
-	public static PImage colorizeSign(ImageInteger src, int maxAbsValue) {
+	public static PImage colorizeSign(GrayI src, int maxAbsValue) {
 		PImage out = new PImage(src.width, src.height, PConstants.RGB);
 
 		int indexOut = 0;
@@ -121,7 +121,7 @@ public class VisualizeProcessing {
 	 * @param colors Color lookup table
 	 * @return Visualized image
 	 */
-	public static PImage labeled(ImageSInt32 image, int[] colors) {
+	public static PImage labeled(GrayS32 image, int[] colors) {
 		PImage out = new PImage(image.width, image.height, PConstants.RGB);
 
 		int indexOut = 0;
@@ -142,7 +142,7 @@ public class VisualizeProcessing {
 	 * @param dy Derivative y-axis
 	 * @return Visualized image
 	 */
-	public static PImage gradient(ImageFloat32 dx, ImageFloat32 dy) {
+	public static PImage gradient(GrayF32 dx, GrayF32 dy) {
 		PImage out = new PImage(dx.width, dx.height, PConstants.RGB);
 
 		float maxAbsValue = ImageStatistics.maxAbs(dx);
@@ -191,7 +191,7 @@ public class VisualizeProcessing {
 	 * @param dy Derivative y-axis
 	 * @return Visualized image
 	 */
-	public static PImage gradient(ImageSInt16 dx, ImageSInt16 dy) {
+	public static PImage gradient(GrayS16 dx, GrayS16 dy) {
 		PImage out = new PImage(dx.width, dx.height, PConstants.RGB);
 
 		int maxAbsValue = ImageStatistics.maxAbs(dx);

@@ -20,7 +20,7 @@ package boofcv.processing;
 
 import boofcv.abst.fiducial.FiducialDetector;
 import boofcv.alg.geo.PerspectiveOps;
-import boofcv.struct.calib.IntrinsicParameters;
+import boofcv.struct.calib.CameraPinholeRadial;
 import boofcv.struct.image.ImageBase;
 import georegression.struct.point.Point2D_F64;
 import georegression.struct.point.Point2D_I32;
@@ -42,14 +42,14 @@ import java.util.List;
 public class SimpleFiducial {
 	FiducialDetector detector;
 	ImageBase boofImage;
-	IntrinsicParameters intrinsic;
+	CameraPinholeRadial intrinsic;
 
 	public SimpleFiducial(FiducialDetector detector) {
 		this.detector = detector;
 		boofImage = detector.getInputType().createImage(1,1);
 	}
 
-	public void setIntrinsic( IntrinsicParameters intrinsic ) {
+	public void setIntrinsic( CameraPinholeRadial intrinsic ) {
 		detector.setIntrinsic(intrinsic);
 		this.intrinsic = intrinsic;
 	}
@@ -68,10 +68,16 @@ public class SimpleFiducial {
 
 			long id = detector.getId(i);
 			double width = detector.getWidth(i);
-			Se3_F64 fiducialToWorld = new Se3_F64();
-			detector.getFiducialToCamera(i, fiducialToWorld);
+			Se3_F64 fiducialToWorld = null;
+			if( detector.isSupportedPose() ) {
+				fiducialToWorld = new Se3_F64();
+				detector.getFiducialToCamera(i, fiducialToWorld);
+			}
+			Point2D_F64 location = new Point2D_F64();
+			detector.getImageLocation(i , location);
 
-			found.add( new FiducialFound(id,width,fiducialToWorld) );
+
+			found.add( new FiducialFound(id,width,location, fiducialToWorld) );
 		}
 
 		return found;

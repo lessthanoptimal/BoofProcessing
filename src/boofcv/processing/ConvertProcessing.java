@@ -18,10 +18,10 @@
 
 package boofcv.processing;
 
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayU8;
 import boofcv.struct.image.ImageBase;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageUInt8;
-import boofcv.struct.image.MultiSpectral;
+import boofcv.struct.image.Planar;
 import processing.core.PImage;
 
 /**
@@ -32,21 +32,21 @@ import processing.core.PImage;
 public class ConvertProcessing {
 
 	public static void convertFromRGB( PImage input , ImageBase output ) {
-		if( output instanceof ImageUInt8 ) {
-			convert_RGB_U8(input,(ImageUInt8)output);
-		} else if( output instanceof ImageFloat32) {
-			convert_RGB_F32(input, (ImageFloat32) output);
-		} else if( output instanceof MultiSpectral ) {
-			Class bandType = ((MultiSpectral)output).getBandType();
-			if( bandType == ImageFloat32.class ) {
-				convert_RGB_MSF32(input,(MultiSpectral)output);
-			} else if( bandType == ImageUInt8.class ) {
-				convert_RGB_MSU8(input, (MultiSpectral) output);
+		if( output instanceof GrayU8 ) {
+			convert_RGB_U8(input,(GrayU8)output);
+		} else if( output instanceof GrayF32) {
+			convert_RGB_F32(input, (GrayF32) output);
+		} else if( output instanceof Planar ) {
+			Class bandType = ((Planar)output).getBandType();
+			if( bandType == GrayF32.class ) {
+				convert_RGB_MSF32(input,(Planar)output);
+			} else if( bandType == GrayU8.class ) {
+				convert_RGB_MSU8(input, (Planar) output);
 			}
 		}
 	}
 
-	public static void convert_RGB_F32( PImage input , ImageFloat32 output ) {
+	public static void convert_RGB_F32( PImage input , GrayF32 output ) {
 
 		int indexInput = 0;
 		for( int y = 0; y < input.height; y++ ) {
@@ -63,7 +63,7 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_RGB_U8( PImage input , ImageUInt8 output ) {
+	public static void convert_RGB_U8( PImage input , GrayU8 output ) {
 
 		int indexInput = 0;
 		for( int y = 0; y < input.height; y++ ) {
@@ -80,7 +80,7 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_F32_RGB( ImageFloat32 input , PImage output ) {
+	public static void convert_F32_RGB( GrayF32 input , PImage output ) {
 
 		int indexOutput = 0;
 		for( int y = 0; y < input.height; y++ ) {
@@ -93,7 +93,7 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_U8_RGB( ImageUInt8 input , PImage output ) {
+	public static void convert_U8_RGB( GrayU8 input , PImage output ) {
 
 		int indexOutput = 0;
 		for( int y = 0; y < input.height; y++ ) {
@@ -106,11 +106,11 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_MSF32_RGB( MultiSpectral<ImageFloat32> input , PImage output ) {
+	public static void convert_MSF32_RGB( Planar<GrayF32> input , PImage output ) {
 
-		ImageFloat32 red = input.getBand(0);
-		ImageFloat32 green = input.getBand(1);
-		ImageFloat32 blue = input.getBand(2);
+		GrayF32 red = input.getBand(0);
+		GrayF32 green = input.getBand(1);
+		GrayF32 blue = input.getBand(2);
 
 		int indexOutput = 0;
 		for( int y = 0; y < input.height; y++ ) {
@@ -125,11 +125,11 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_MSU8_RGB( MultiSpectral<ImageUInt8> input , PImage output ) {
+	public static void convert_MSU8_RGB( Planar<GrayU8> input , PImage output ) {
 
-		ImageUInt8 red = input.getBand(0);
-		ImageUInt8 green = input.getBand(1);
-		ImageUInt8 blue = input.getBand(2);
+		GrayU8 red = input.getBand(0);
+		GrayU8 green = input.getBand(1);
+		GrayU8 blue = input.getBand(2);
 
 		int indexOutput = 0;
 		for( int y = 0; y < input.height; y++ ) {
@@ -144,11 +144,11 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_RGB_MSF32( PImage input , MultiSpectral<ImageFloat32> output ) {
+	public static void convert_RGB_MSF32( PImage input , Planar<GrayF32> output ) {
 
-		ImageFloat32 red = output.getBand(0);
-		ImageFloat32 green = output.getBand(1);
-		ImageFloat32 blue = output.getBand(2);
+		GrayF32 red = output.getBand(0);
+		GrayF32 green = output.getBand(1);
+		GrayF32 blue = output.getBand(2);
 
 		int indexInput = 0;
 		for( int y = 0; y < input.height; y++ ) {
@@ -163,11 +163,11 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_RGB_MSU8( PImage input , MultiSpectral<ImageUInt8> output ) {
+	public static void convert_RGB_MSU8( PImage input , Planar<GrayU8> output ) {
 
-		ImageUInt8 red = output.getBand(0);
-		ImageUInt8 green = output.getBand(1);
-		ImageUInt8 blue = output.getBand(2);
+		GrayU8 red = output.getBand(0);
+		GrayU8 green = output.getBand(1);
+		GrayU8 blue = output.getBand(2);
 
 		int indexInput = 0;
 		for( int y = 0; y < input.height; y++ ) {
