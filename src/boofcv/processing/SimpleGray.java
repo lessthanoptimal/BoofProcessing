@@ -40,7 +40,7 @@ import boofcv.factory.feature.detect.line.ConfigHoughPolar;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
 import boofcv.factory.filter.derivative.FactoryDerivative;
 import boofcv.factory.geo.FactoryMultiView;
-import boofcv.struct.distort.PixelTransform_F32;
+import boofcv.struct.distort.PixelTransform2_F32;
 import boofcv.struct.geo.AssociatedPair;
 import boofcv.struct.image.GrayF32;
 import boofcv.struct.image.GrayI;
@@ -124,7 +124,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		if (!(image instanceof GrayU8))
 			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageGray adjusted = (ImageGray)image._createNew(image.width, image.height);
+		ImageGray adjusted = (ImageGray)image.createNew(image.width, image.height);
 		GEnhanceImageOps.sharpen4(image, adjusted);
 
 		return new SimpleGray(adjusted);
@@ -141,7 +141,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		if (!(image instanceof GrayU8))
 			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageGray adjusted = (ImageGray)image._createNew(image.width, image.height);
+		ImageGray adjusted = (ImageGray)image.createNew(image.width, image.height);
 		GEnhanceImageOps.sharpen8(image, adjusted);
 
 		return new SimpleGray(adjusted);
@@ -181,7 +181,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 										 double x2, double y2,
 										 double x3, double y3 )
 	{
-		ImageGray output = (ImageGray)image._createNew(outWidth,outHeight);
+		ImageGray output = (ImageGray)image.createNew(outWidth,outHeight);
 
 		// Homography estimation algorithm.  Requires a minimum of 4 points
 		Estimate1ofEpipolar computeHomography = FactoryMultiView.computeHomography(true);
@@ -199,7 +199,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 
 		// Create the transform for distorting the image
 		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H);
-		PixelTransform_F32 pixelTransform = new PointToPixelTransform_F32(homography);
+		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
 		DistortImageOps.distortSingle(image, output, pixelTransform, TypeInterpolate.BILINEAR, BorderType.SKIP);

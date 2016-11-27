@@ -27,7 +27,7 @@ import boofcv.alg.interpolate.TypeInterpolate;
 import boofcv.core.image.GConvertImage;
 import boofcv.core.image.GeneralizedImageOps;
 import boofcv.factory.geo.FactoryMultiView;
-import boofcv.struct.distort.PixelTransform_F32;
+import boofcv.struct.distort.PixelTransform2_F32;
 import boofcv.struct.geo.AssociatedPair;
 import boofcv.struct.image.GrayF32;
 import boofcv.struct.image.GrayU8;
@@ -73,7 +73,7 @@ public class SimpleColor extends SimpleImage<Planar>{
 										 double x2, double y2,
 										 double x3, double y3 )
 	{
-		Planar output = (Planar)image._createNew(outWidth,outHeight);
+		Planar output = (Planar)image.createNew(outWidth,outHeight);
 
 		// Homography estimation algorithm.  Requires a minimum of 4 points
 		Estimate1ofEpipolar computeHomography = FactoryMultiView.computeHomography(true);
@@ -91,7 +91,7 @@ public class SimpleColor extends SimpleImage<Planar>{
 
 		// Create the transform for distorting the image
 		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H);
-		PixelTransform_F32 pixelTransform = new PointToPixelTransform_F32(homography);
+		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
 		DistortImageOps.distortPL(image, output, pixelTransform, null, TypeInterpolate.BILINEAR);
@@ -129,9 +129,9 @@ public class SimpleColor extends SimpleImage<Planar>{
 	public PImage convert() {
 		PImage out = new PImage(image.width,image.height, PConstants.RGB);
 		if( image.getBandType() == GrayF32.class) {
-			ConvertProcessing.convert_MSF32_RGB(image, out);
+			ConvertProcessing.convert_PF32_RGB(image, out);
 		} else if( image.getBandType() == GrayU8.class ) {
-			ConvertProcessing.convert_MSU8_RGB(image,out);
+			ConvertProcessing.convert_PU8_RGB(image,out);
 		} else {
 			throw new RuntimeException("Unknown image type");
 		}

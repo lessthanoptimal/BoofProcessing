@@ -49,6 +49,10 @@ import boofcv.factory.flow.FactoryDenseOpticalFlow;
 import boofcv.factory.segmentation.*;
 import boofcv.factory.tracker.FactoryTrackerObjectQuad;
 import boofcv.struct.image.*;
+import georegression.geometry.ConvertRotation3D_F64;
+import georegression.struct.EulerType;
+import georegression.struct.so.Rodrigues_F64;
+import org.ejml.data.DenseMatrix64F;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -113,7 +117,7 @@ public class Boof {
 			switch (image.format) {
 				case PConstants.RGB:
 				case PConstants.ARGB:
-					ConvertProcessing.convert_RGB_MSF32(image, out);
+					ConvertProcessing.convert_RGB_PF32(image, out);
 					break;
 
 				default:
@@ -128,7 +132,7 @@ public class Boof {
 			switch (image.format) {
 				case PConstants.RGB:
 				case PConstants.ARGB:
-					ConvertProcessing.convert_RGB_MSU8(image, out);
+					ConvertProcessing.convert_RGB_PU8(image, out);
 					break;
 
 				default:
@@ -306,6 +310,21 @@ public class Boof {
 	public static SimpleFiducialSquareImage fiducialSquareImage( int threshold ) {
 		return new SimpleFiducialSquareImage(FactoryFiducial.squareImage(new ConfigFiducialImage(),
 				ConfigThreshold.fixed(threshold), GrayU8.class));
+	}
+
+	/**
+	 * Returns a class for converting equirectangular images into pinhole images
+	 */
+	public static EquirectangularToPinhole equirectangularToPinhole() {
+		return new EquirectangularToPinhole();
+	}
+
+	public static DenseMatrix64F eulerXYZ( double rotX , double rotY , double rotZ ) {
+		return ConvertRotation3D_F64.eulerToMatrix(EulerType.XYZ,rotX,rotY,rotZ,null);
+	}
+
+	public static DenseMatrix64F rodrigues( double angle , double axisX , double axisY , double axisZ ) {
+		return ConvertRotation3D_F64.rodriguesToMatrix(new Rodrigues_F64(angle,axisX,axisY,axisZ),null);
 	}
 
 }

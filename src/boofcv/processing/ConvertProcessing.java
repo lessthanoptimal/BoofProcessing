@@ -39,9 +39,9 @@ public class ConvertProcessing {
 		} else if( output instanceof Planar ) {
 			Class bandType = ((Planar)output).getBandType();
 			if( bandType == GrayF32.class ) {
-				convert_RGB_MSF32(input,(Planar)output);
+				convert_RGB_PF32(input,(Planar)output);
 			} else if( bandType == GrayU8.class ) {
-				convert_RGB_MSU8(input, (Planar) output);
+				convert_RGB_PU8(input, (Planar) output);
 			}
 		}
 	}
@@ -106,7 +106,7 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_MSF32_RGB( Planar<GrayF32> input , PImage output ) {
+	public static void convert_PF32_RGB(Planar<GrayF32> input , PImage output ) {
 
 		GrayF32 red = input.getBand(0);
 		GrayF32 green = input.getBand(1);
@@ -125,7 +125,7 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_MSU8_RGB( Planar<GrayU8> input , PImage output ) {
+	public static void convert_PU8_RGB(Planar<GrayU8> input , PImage output ) {
 
 		GrayU8 red = input.getBand(0);
 		GrayU8 green = input.getBand(1);
@@ -144,7 +144,7 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_RGB_MSF32( PImage input , Planar<GrayF32> output ) {
+	public static void convert_RGB_PF32(PImage input , Planar<GrayF32> output ) {
 
 		GrayF32 red = output.getBand(0);
 		GrayF32 green = output.getBand(1);
@@ -163,7 +163,7 @@ public class ConvertProcessing {
 		}
 	}
 
-	public static void convert_RGB_MSU8( PImage input , Planar<GrayU8> output ) {
+	public static void convert_RGB_PU8(PImage input , Planar<GrayU8> output ) {
 
 		GrayU8 red = output.getBand(0);
 		GrayU8 green = output.getBand(1);

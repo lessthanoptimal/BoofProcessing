@@ -170,6 +170,11 @@ task processingDirectory( dependsOn:[processingJar,processingJavaDoc]) {
         }
 
         copy {
+            from 'data/example/spherical/equirectangular_half_dome_01.jpg'
+            into 'tmp/boofcv_processing/examples/EquiToPinhole'
+        }
+
+        copy {
             from javadoc.destinationDir
             into 'tmp/boofcv_processing/reference'
         }
