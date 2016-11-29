@@ -175,6 +175,11 @@ task processingDirectory( dependsOn:[processingJar,processingJavaDoc]) {
         }
 
         copy {
+            from 'data/example/recognition/pixabay/cat01.jpg'
+            into 'tmp/boofcv_processing/examples/ImageClassification'
+        }
+
+        copy {
             from javadoc.destinationDir
             into 'tmp/boofcv_processing/reference'
         }

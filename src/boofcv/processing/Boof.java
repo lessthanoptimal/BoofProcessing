@@ -46,12 +46,15 @@ import boofcv.factory.flow.ConfigHornSchunck;
 import boofcv.factory.flow.ConfigHornSchunckPyramid;
 import boofcv.factory.flow.ConfigOpticalFlowBlockPyramid;
 import boofcv.factory.flow.FactoryDenseOpticalFlow;
+import boofcv.factory.scene.ClassifierAndSource;
+import boofcv.factory.scene.FactoryImageClassifier;
 import boofcv.factory.segmentation.*;
 import boofcv.factory.tracker.FactoryTrackerObjectQuad;
 import boofcv.struct.image.*;
 import georegression.geometry.ConvertRotation3D_F64;
 import georegression.struct.EulerType;
 import georegression.struct.so.Rodrigues_F64;
+import org.ddogleg.struct.Tuple2;
 import org.ejml.data.DenseMatrix64F;
 import processing.core.PConstants;
 import processing.core.PImage;
@@ -325,6 +328,19 @@ public class Boof {
 
 	public static DenseMatrix64F rodrigues( double angle , double axisX , double axisY , double axisZ ) {
 		return ConvertRotation3D_F64.rodriguesToMatrix(new Rodrigues_F64(angle,axisX,axisY,axisZ),null);
+	}
+
+	public static SimpleImageClassification imageClassification( String which ) {
+		ClassifierAndSource cs;
+		if( which.compareTo("VGG") == 0 ) {
+			cs = FactoryImageClassifier.vgg_cifar10();
+		} else if( which.compareTo("NIN") == 0 ) {
+			cs = FactoryImageClassifier.nin_imagenet();
+		} else {
+			throw new IllegalArgumentException("Unknown model.  Valid options.  VGG, NIN");
+		}
+
+		return new SimpleImageClassification(cs);
 	}
 
 }
