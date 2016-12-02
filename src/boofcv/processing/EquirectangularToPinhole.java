@@ -4,7 +4,7 @@ import boofcv.alg.distort.ImageDistort;
 import boofcv.alg.distort.spherical.EquirectangularToPinhole_F32;
 import boofcv.alg.geo.PerspectiveOps;
 import boofcv.alg.interpolate.InterpolatePixel;
-import boofcv.alg.interpolate.TypeInterpolate;
+import boofcv.alg.interpolate.InterpolateType;
 import boofcv.core.image.border.BorderType;
 import boofcv.factory.distort.FactoryDistort;
 import boofcv.factory.interpolate.FactoryInterpolation;
@@ -36,7 +36,7 @@ public class EquirectangularToPinhole {
         ImageType<Planar<GrayU8>> imageType = ImageType.pl(3,GrayU8.class);
 
         InterpolatePixel<Planar<GrayU8>> interp = FactoryInterpolation.
-                createPixel(0, 255, TypeInterpolate.BILINEAR, BorderType.EXTENDED, imageType);
+                createPixel(0, 255, InterpolateType.BILINEAR, BorderType.EXTENDED, imageType);
        distorter = FactoryDistort.distort(false,interp,imageType);
     }
 

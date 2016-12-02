@@ -23,7 +23,7 @@ import boofcv.alg.distort.DistortImageOps;
 import boofcv.alg.distort.PointToPixelTransform_F32;
 import boofcv.alg.distort.PointTransformHomography_F32;
 import boofcv.alg.filter.blur.GBlurImageOps;
-import boofcv.alg.interpolate.TypeInterpolate;
+import boofcv.alg.interpolate.InterpolateType;
 import boofcv.core.image.GConvertImage;
 import boofcv.core.image.GeneralizedImageOps;
 import boofcv.factory.geo.FactoryMultiView;
@@ -94,7 +94,7 @@ public class SimpleColor extends SimpleImage<Planar>{
 		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
-		DistortImageOps.distortPL(image, output, pixelTransform, null, TypeInterpolate.BILINEAR);
+		DistortImageOps.distortPL(image, output, pixelTransform, null, InterpolateType.BILINEAR);
 
 		return new SimpleColor(output);
 	}
