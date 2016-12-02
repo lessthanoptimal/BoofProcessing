@@ -24,7 +24,7 @@ configurations {
 }
 
 dependencies {
-    compile group: 'org.boofcv', name: 'core', version: '0.25'
+    compile group: 'org.boofcv', name: 'core', version: '0.26-SNAPSHOT'
 
     processing files("core.jar")
 }
