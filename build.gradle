@@ -96,6 +96,14 @@ task processingJavaDoc(type: Javadoc) {
     }
 }
 
+def myCopy( src , dst ) {
+    assert file(src).exists()
+    copy {
+        from src
+        into dst
+    }
+}
+
 task processingDirectory( dependsOn:[processingJar,processingJavaDoc]) {
 
     file('tmp').deleteDir()
@@ -107,98 +115,27 @@ task processingDirectory( dependsOn:[processingJar,processingJavaDoc]) {
     file('tmp/boofcv_processing/library').mkdir()
 
     doLast {
-        copy {
-            from 'examples'
-            into 'tmp/boofcv_processing/examples'
-        }
-        copy {
-            from 'data/example/particles01.jpg'
-            into 'tmp/boofcv_processing/examples/Contours'
-        }
-        copy {
-            from 'data/example/simple_objects.jpg'
-            into 'tmp/boofcv_processing/examples/Gradient'
-        }
-        copy {
-            from 'data/example/simple_objects.jpg'
-            into 'tmp/boofcv_processing/examples/PolygonFitting'
-        }
-        copy {
-            from 'data/example/shapes/shapes02.png'
-            into 'tmp/boofcv_processing/examples/EllipseFitting'
-        }
-        copy {
-            from 'data/example/segment/berkeley_horses.jpg'
-            into 'tmp/boofcv_processing/examples/ImageSegmentation'
-        }
-        copy {
-            from 'data/example/denseflow/Urban2_07.png'
-            into 'tmp/boofcv_processing/examples/DenseOpticalFlow'
-        }
-        copy {
-            from 'data/example/denseflow/Urban2_08.png'
-            into 'tmp/boofcv_processing/examples/DenseOpticalFlow'
-        }
-
-        copy {
-            from 'data/example/cave_01.jpg'
-            into 'tmp/boofcv_processing/examples/AssociateInterestPoints'
-        }
-        copy {
-            from 'data/example/cave_02.jpg'
-            into 'tmp/boofcv_processing/examples/AssociateInterestPoints'
-        }
-
-        copy {
-            from 'data/example/kayak_02.jpg'
-            into 'tmp/boofcv_processing/examples/DetectInterestPoints'
-        }
-
-        copy {
-            from 'data/example/enhance/dark.png'
-            into 'tmp/boofcv_processing/examples/ImageEnhancement'
-        }
-
-        copy {
-            from 'data/example/simple_objects.jpg'
-            into 'tmp/boofcv_processing/examples/DetectLines'
-        }
-
-        copy {
-            from 'data/example/goals_and_stuff.jpg'
-            into 'tmp/boofcv_processing/examples/RemovePerspective'
-        }
-
-        copy {
-            from 'data/example/spherical/equirectangular_half_dome_01.jpg'
-            into 'tmp/boofcv_processing/examples/EquiToPinhole'
-        }
-
-        copy {
-            from 'data/example/recognition/pixabay/cat01.jpg'
-            into 'tmp/boofcv_processing/examples/ImageClassification'
-        }
-
-        copy {
-            from javadoc.destinationDir
-            into 'tmp/boofcv_processing/reference'
-        }
-        copy {
-            from 'src'
-            into 'tmp/boofcv_processing/src'
-        }
-        copy {
-            from 'library.properties'
-            into 'tmp/boofcv_processing'
-        }
-        copy {
-            from 'boofcv_dependencies.jar'
-            into 'tmp/boofcv_processing/library'
-        }
-        copy {
-            from 'boofcv_processing.jar'
-            into 'tmp/boofcv_processing/library'
-        }
+        myCopy( 'examples',                             'tmp/boofcv_processing/examples')
+        myCopy( 'data/example/particles01.jpg',         'tmp/boofcv_processing/examples/Contours')
+        myCopy( 'data/example/simple_objects.jpg',      'tmp/boofcv_processing/examples/Gradient')
+        myCopy( 'data/example/simple_objects.jpg',      'tmp/boofcv_processing/examples/PolygonFitting')
+        myCopy( 'data/example/shapes/shapes02.png',     'tmp/boofcv_processing/examples/EllipseFitting')
+        myCopy( 'data/example/segment/berkeley_horses.jpg', 'tmp/boofcv_processing/examples/ImageSegmentation')
+        myCopy( 'data/example/denseflow/Urban2_07.png', 'tmp/boofcv_processing/examples/DenseOpticalFlow')
+        myCopy( 'data/example/denseflow/Urban2_08.png', 'tmp/boofcv_processing/examples/DenseOpticalFlow')
+        myCopy( 'data/example/cave_01.jpg',             'tmp/boofcv_processing/examples/AssociateInterestPoints')
+        myCopy( 'data/example/cave_02.jpg',             'tmp/boofcv_processing/examples/AssociateInterestPoints')
+        myCopy( 'data/example/kayak_02.jpg',            'tmp/boofcv_processing/examples/DetectInterestPoints')
+        myCopy( 'data/example/enhance/dark.png',        'tmp/boofcv_processing/examples/ImageEnhancement')
+        myCopy( 'data/example/simple_objects.jpg',      'tmp/boofcv_processing/examples/DetectLines')
+        myCopy( 'data/example/goals_and_stuff.jpg',     'tmp/boofcv_processing/examples/RemovePerspective')
+        myCopy( 'data/example/spherical/equirectangular_half_dome_01.jpg','tmp/boofcv_processing/examples/EquiToPinhole')
+        myCopy( 'data/example/recognition/pixabay/cat01.jpg','tmp/boofcv_processing/examples/ImageClassification')
+        myCopy( javadoc.destinationDir,                 'tmp/boofcv_processing/reference')
+        myCopy( 'src',                                  'tmp/boofcv_processing/src')
+        myCopy( 'library.properties',                   'tmp/boofcv_processing')
+        myCopy( 'boofcv_dependencies.jar',              'tmp/boofcv_processing/library')
+        myCopy( 'boofcv_processing.jar',                'tmp/boofcv_processing/library')
     }
 }
 
