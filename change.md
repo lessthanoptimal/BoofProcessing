@@ -1,3 +1,7 @@
+### Version 0.26
+
+* Updated for BoofCV 0.26
+
 ### Version 0.25
 
 * Updated for BoofCV 0.25

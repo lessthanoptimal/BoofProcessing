@@ -29,7 +29,7 @@ import boofcv.alg.enhance.GEnhanceImageOps;
 import boofcv.alg.filter.binary.GThresholdImageOps;
 import boofcv.alg.filter.blur.GBlurImageOps;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
-import boofcv.alg.interpolate.InterpolateType;
+import boofcv.alg.interpolate.InterpolationType;
 import boofcv.alg.misc.GImageStatistics;
 import boofcv.alg.misc.ImageStatistics;
 import boofcv.core.image.GConvertImage;
@@ -202,7 +202,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
-		DistortImageOps.distortSingle(image, output, pixelTransform, InterpolateType.BILINEAR, BorderType.SKIP);
+		DistortImageOps.distortSingle(image, output, pixelTransform, InterpolationType.BILINEAR, BorderType.SKIP);
 
 		return new SimpleGray(output);
 	}
