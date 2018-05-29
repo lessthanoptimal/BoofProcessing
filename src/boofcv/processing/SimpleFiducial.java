@@ -19,7 +19,7 @@
 package boofcv.processing;
 
 import boofcv.abst.fiducial.FiducialDetector;
-import boofcv.alg.distort.LensDistortionOps;
+import boofcv.alg.distort.pinhole.LensDistortionPinhole;
 import boofcv.alg.geo.PerspectiveOps;
 import boofcv.struct.calib.CameraPinholeRadial;
 import boofcv.struct.image.ImageBase;
@@ -51,7 +51,7 @@ public class SimpleFiducial {
 	}
 
 	public void setIntrinsic( CameraPinholeRadial intrinsic ) {
-		detector.setLensDistortion(LensDistortionOps.transformPoint(intrinsic));
+		detector.setLensDistortion(new LensDistortionPinhole(intrinsic),intrinsic.width,intrinsic.height);
 		this.intrinsic = intrinsic;
 	}
 
@@ -75,8 +75,7 @@ public class SimpleFiducial {
 				detector.getFiducialToCamera(i, fiducialToWorld);
 			}
 			Point2D_F64 location = new Point2D_F64();
-			detector.getImageLocation(i , location);
-
+			detector.getCenter(i , location);
 
 			found.add( new FiducialFound(id,width,location, fiducialToWorld) );
 		}

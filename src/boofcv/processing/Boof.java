@@ -51,11 +51,13 @@ import boofcv.factory.scene.FactoryImageClassifier;
 import boofcv.factory.segmentation.*;
 import boofcv.factory.tracker.FactoryTrackerObjectQuad;
 import boofcv.struct.image.*;
+import georegression.geometry.ConvertRotation3D_F32;
 import georegression.geometry.ConvertRotation3D_F64;
 import georegression.struct.EulerType;
+import georegression.struct.so.Rodrigues_F32;
 import georegression.struct.so.Rodrigues_F64;
-import org.ddogleg.struct.Tuple2;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.FMatrixRMaj;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -283,7 +285,7 @@ public class Boof {
 	 */
 	public static SimpleFiducial fiducialSquareBinaryRobust( double width  ) {
 		return new SimpleFiducial(FactoryFiducial.squareBinary(new ConfigFiducialBinary(width),
-				ConfigThreshold.local(ThresholdType.LOCAL_SQUARE, 15), GrayU8.class));
+				ConfigThreshold.local(ThresholdType.LOCAL_MEAN, 31), GrayU8.class));
 	}
 
 	/**
@@ -291,7 +293,7 @@ public class Boof {
 	 */
 	public static SimpleFiducialSquareImage fiducialSquareImageRobust() {
 		return new SimpleFiducialSquareImage(FactoryFiducial.squareImage(new ConfigFiducialImage(),
-				ConfigThreshold.local(ThresholdType.LOCAL_SQUARE,15), GrayU8.class));
+				ConfigThreshold.local(ThresholdType.LOCAL_MEAN,31), GrayU8.class));
 	}
 
 	/**
@@ -322,12 +324,20 @@ public class Boof {
 		return new EquirectangularToPinhole();
 	}
 
-	public static DenseMatrix64F eulerXYZ( double rotX , double rotY , double rotZ ) {
+	public static DMatrixRMaj eulerXYZ( double rotX , double rotY , double rotZ ) {
 		return ConvertRotation3D_F64.eulerToMatrix(EulerType.XYZ,rotX,rotY,rotZ,null);
 	}
 
-	public static DenseMatrix64F rodrigues( double angle , double axisX , double axisY , double axisZ ) {
+	public static FMatrixRMaj eulerXYZ( float rotX , float rotY , float rotZ ) {
+		return ConvertRotation3D_F32.eulerToMatrix(EulerType.XYZ,rotX,rotY,rotZ,null);
+	}
+
+	public static DMatrixRMaj rodrigues( double angle , double axisX , double axisY , double axisZ ) {
 		return ConvertRotation3D_F64.rodriguesToMatrix(new Rodrigues_F64(angle,axisX,axisY,axisZ),null);
+	}
+
+	public static FMatrixRMaj rodrigues( float angle , float axisX , float axisY , float axisZ ) {
+		return ConvertRotation3D_F32.rodriguesToMatrix(new Rodrigues_F32(angle,axisX,axisY,axisZ),null);
 	}
 
 	public static SimpleImageClassification imageClassification( String which ) {

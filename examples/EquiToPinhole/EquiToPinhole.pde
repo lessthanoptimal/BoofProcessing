@@ -1,8 +1,8 @@
 // Loads an equirectangular image an renders an arbitrary pinhole camera
 // This example will render a pinhole camera that's rotating around
 import boofcv.processing.*;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.*;
+import org.ejml.data.FMatrixRMaj;
+import org.ejml.dense.row.*;
 
 PImage imgContour;
 PImage imgBlobs;
@@ -27,14 +27,14 @@ void setup() {
 
 void draw() {
   // rotate the view around horizontally
-  double angle = 2.0*Math.PI*(tick++%180)/180;
+  float angle = (float)(2.0*Math.PI*(tick++%180)/180);
 
   // rotation which will align the camera to be visually pleasing
-  DenseMatrix64F alignR = Boof.eulerXYZ(Math.PI/2.0,0,Math.PI/2.0);
+  FMatrixRMaj alignR = Boof.eulerXYZ((float)(Math.PI/2.0),0f,(float)(Math.PI/2.0));
   // Rotate around the Z axis
-  DenseMatrix64F rotZ = Boof.eulerXYZ(0,0,angle);
-  DenseMatrix64F R = new DenseMatrix64F(3,3);
-  CommonOps.mult(rotZ,alignR,R);
+  FMatrixRMaj rotZ = Boof.eulerXYZ(0,0,angle);
+  FMatrixRMaj R = new FMatrixRMaj(3,3);
+  CommonOps_FDRM.mult(rotZ,alignR,R);
   // Tell the projection to use this rotation matrix
   equiToPinhole.setOrientation(R);
 

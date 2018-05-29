@@ -1,7 +1,7 @@
 package boofcv.processing;
 
 import boofcv.alg.distort.ImageDistort;
-import boofcv.alg.distort.spherical.PinholeToEquirectangular_F32;
+import boofcv.alg.distort.spherical.CameraToEquirectangular_F32;
 import boofcv.alg.geo.PerspectiveOps;
 import boofcv.alg.interpolate.InterpolatePixel;
 import boofcv.alg.interpolate.InterpolationType;
@@ -12,7 +12,9 @@ import boofcv.struct.calib.CameraPinhole;
 import boofcv.struct.image.GrayU8;
 import boofcv.struct.image.ImageType;
 import boofcv.struct.image.Planar;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.FMatrixRMaj;
+import org.ejml.ops.ConvertMatrixData;
 import processing.core.PImage;
 
 /**
@@ -28,7 +30,7 @@ public class EquirectangularToPinhole {
     ImageDistort<Planar<GrayU8>,Planar<GrayU8>> distorter;
     CameraPinhole intrinsic;
 
-    PinholeToEquirectangular_F32 equiToPinhole = new PinholeToEquirectangular_F32();
+    CameraToEquirectangular_F32 equiToPinhole = new CameraToEquirectangular_F32();
 
     boolean pinholeChanged = false;
 
@@ -58,9 +60,14 @@ public class EquirectangularToPinhole {
         pinholeChanged = true;
     }
 
-    public void setOrientation(DenseMatrix64F R ) {
+    public void setOrientation(DMatrixRMaj R ) {
+        ConvertMatrixData.convert(R,equiToPinhole.getRotation());
+    }
+
+    public void setOrientation(FMatrixRMaj R ) {
         equiToPinhole.getRotation().set(R);
     }
+
 
     public void setEquirectangular(PImage image ) {
         if( equiImage.width != image.width || equiImage.height != image.height ) {
@@ -77,7 +84,7 @@ public class EquirectangularToPinhole {
 
         if( pinholeChanged ) {
             pinholeChanged = false;
-            equiToPinhole.setPinhole(intrinsic);
+            equiToPinhole.setCameraModel(intrinsic);
             distorter.setModel(equiToPinhole);
         }
 

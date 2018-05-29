@@ -18,8 +18,8 @@
 
 package boofcv.processing;
 
+import georegression.struct.curve.EllipseRotated_F64;
 import georegression.struct.point.Point2D_I32;
-import georegression.struct.shapes.EllipseRotated_F64;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -32,7 +32,7 @@ import java.util.List;
  * @author Peter Abeles
  */
 public class SimpleContourList {
-	List<SimpleContour> contour = new ArrayList<SimpleContour>();
+	List<SimpleContour> contour;
 	// input image width and height
 	int width,height;
 
@@ -45,19 +45,16 @@ public class SimpleContourList {
 	/**
 	 * Fits a polygon to the specified contour.
 	 *
-	 * @see boofcv.alg.shapes.ShapeFittingOps#fitPolygon(java.util.List, boolean, double, double, int)
+	 * @see boofcv.alg.shapes.ShapeFittingOps#fitPolygon(java.util.List, boolean, int, double)
 	 *
 	 * @param external true for the external contour or false for all the internal contours
-	 * @param splitFraction A line will be split if a point is more than this fraction of its
-	 *                     length away from the line. Try 0.05
-	 * @param minimumSideFraction The minimum allowed side length as a function of contour length.
 	 * @return List of polygons described by their vertexes
 	 */
-	public List<List<Point2D_I32>> fitPolygons( boolean external , double splitFraction, double minimumSideFraction ) {
-		List<List<Point2D_I32>> polygons = new ArrayList<List<Point2D_I32>>();
+	public List<List<Point2D_I32>> fitPolygons( boolean external , int minimumSideLength , double cornerPenalty ) {
+		List<List<Point2D_I32>> polygons = new ArrayList<>();
 
 		for (int i = 0; i < contour.size(); i++) {
-			polygons.addAll(contour.get(i).fitPolygon(external,splitFraction,minimumSideFraction));
+			polygons.addAll(contour.get(i).fitPolygon(external,minimumSideLength,cornerPenalty));
 		}
 
 		return polygons;
@@ -72,7 +69,7 @@ public class SimpleContourList {
 	 * @return List of found ellipses
 	 */
 	public List<EllipseRotated_F64> fitEllipses( boolean external ) {
-		List<EllipseRotated_F64> ellipses = new ArrayList<EllipseRotated_F64>();
+		List<EllipseRotated_F64> ellipses = new ArrayList<>();
 
 		for (int i = 0; i < contour.size(); i++) {
 			ellipses.addAll(contour.get(i).fitEllipses(external));

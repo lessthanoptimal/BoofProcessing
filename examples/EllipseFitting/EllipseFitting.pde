@@ -3,7 +3,7 @@
 
 import boofcv.processing.*;
 import boofcv.struct.image.*;
-import georegression.struct.shapes.*;
+import georegression.struct.curve.*;
 import java.util.*;
 
 PImage input;

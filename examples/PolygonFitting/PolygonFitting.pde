@@ -34,7 +34,7 @@ void setup() {
   contours = new SimpleContourList(prunedList, input.width, input.height);
 
   // Fit polygons to external contours
-  polygons = contours.fitPolygons(true, 0.05, 0.01);
+  polygons = contours.fitPolygons(true, 15, 0.50);
 
   surface.setSize(input.width, input.height);
 }
@@ -54,6 +54,8 @@ void draw() {
 
   // Draw each polygon
   for ( List<Point2D_I32> poly : polygons ) {
+    if( poly.size() == 0 )
+      continue;
     beginShape();
     for ( Point2D_I32 p : poly) {
       vertex( p.x, p.y );

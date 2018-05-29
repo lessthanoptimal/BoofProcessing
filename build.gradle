@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'maven'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -14,17 +14,14 @@ repositories {
     }
 }
 
-if( !file('./core.jar').exists()) {
-    logger.warn("Can't find core.jar.  See README.MD for instruction on how to fix this")
-}
-
 configurations {
     processing
     compile.extendsFrom processing
 }
 
 dependencies {
-    compile group: 'org.boofcv', name: 'core', version: '0.26'
+    compile group: 'org.boofcv', name: 'boofcv-core', version: '0.30'
+    compile group: 'org.processing', name: 'core', version: '3.3.7'
 
     processing files("core.jar")
 }
@@ -87,7 +84,7 @@ task processingJavaDoc(type: Javadoc) {
     // provide references to external javadoc
     configure(options) {
         failOnError = false
-        links = ['http://docs.oracle.com/javase/7/docs/api/',
+        links = ['http://docs.oracle.com/javase/8/docs/api/',
                  'http://ejml.org/javadoc/',
                  'http://georegression.org/javadoc/',
                  'http://ddogleg.org/javadoc/',
@@ -146,14 +143,6 @@ task processingZip( type: Zip, dependsOn:processingDirectory) {
     archiveName = 'boofcv_processing.zip'
 }
 
-idea {
-    project {
-        jdkName = '1.7 (64bit)'
-        languageLevel = '1.7'
-    }
-
-    module {
-        name = "BoofProcessing"
-    }
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.4'
 }
-

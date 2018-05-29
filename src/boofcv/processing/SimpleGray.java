@@ -40,6 +40,7 @@ import boofcv.factory.feature.detect.line.ConfigHoughPolar;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
 import boofcv.factory.filter.derivative.FactoryDerivative;
 import boofcv.factory.geo.FactoryMultiView;
+import boofcv.struct.ConfigLength;
 import boofcv.struct.distort.PixelTransform2_F32;
 import boofcv.struct.geo.AssociatedPair;
 import boofcv.struct.image.GrayF32;
@@ -48,7 +49,9 @@ import boofcv.struct.image.GrayU8;
 import boofcv.struct.image.ImageGray;
 import georegression.struct.line.LineParametric2D_F32;
 import georegression.struct.point.Point2D_F64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.FMatrixRMaj;
+import org.ejml.ops.ConvertMatrixData;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -61,18 +64,18 @@ import java.util.List;
  * @author Peter Abeles
  */
 @SuppressWarnings("unchecked")
-public class SimpleGray extends SimpleImage<ImageGray>{
+public class SimpleGray<T extends ImageGray<T>> extends SimpleImage<T>{
 
-	public SimpleGray(ImageGray image) {
+	public SimpleGray(T image) {
 		super(image);
 	}
 
 	public SimpleGray blurMean( int radius ) {
-		return new SimpleGray(GBlurImageOps.mean(image, null, radius, null));
+		return new SimpleGray((T)GBlurImageOps.mean(image, null, radius, null));
 	}
 
 	public SimpleGray blurMedian( int radius ) {
-		return new SimpleGray(GBlurImageOps.median(image, null, radius));
+		return new SimpleGray((T)GBlurImageOps.median(image, null, radius));
 	}
 
 	/**
@@ -90,7 +93,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		int histogram[] = new int[256];
 		int transform[] = new int[256];
 
-		ImageStatistics.histogram((GrayU8) image, histogram);
+		ImageStatistics.histogram((GrayU8) image,0, histogram);
 		EnhanceImageOps.equalize(histogram, transform);
 		EnhanceImageOps.applyTransform((GrayU8) image, transform, adjusted);
 
@@ -124,7 +127,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		if (!(image instanceof GrayU8))
 			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageGray adjusted = (ImageGray)image.createNew(image.width, image.height);
+		T adjusted = image.createSameShape();
 		GEnhanceImageOps.sharpen4(image, adjusted);
 
 		return new SimpleGray(adjusted);
@@ -141,7 +144,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		if (!(image instanceof GrayU8))
 			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageGray adjusted = (ImageGray)image.createNew(image.width, image.height);
+		T adjusted = image.createSameShape();
 		GEnhanceImageOps.sharpen8(image, adjusted);
 
 		return new SimpleGray(adjusted);
@@ -184,7 +187,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		ImageGray output = (ImageGray)image.createNew(outWidth,outHeight);
 
 		// Homography estimation algorithm.  Requires a minimum of 4 points
-		Estimate1ofEpipolar computeHomography = FactoryMultiView.computeHomography(true);
+		Estimate1ofEpipolar computeHomography = FactoryMultiView.computeHomographyDLT(true);
 
 		// Specify the pixel coordinates from destination to target
 		ArrayList<AssociatedPair> associatedPairs = new ArrayList<AssociatedPair>();
@@ -194,11 +197,13 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		associatedPairs.add(new AssociatedPair(new Point2D_F64(0,outHeight-1),new Point2D_F64(x3,y3)));
 
 		// Compute the homography
-		DenseMatrix64F H = new DenseMatrix64F(3,3);
+		DMatrixRMaj H = new DMatrixRMaj(3,3);
 		computeHomography.process(associatedPairs, H);
 
 		// Create the transform for distorting the image
-		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H);
+		FMatrixRMaj H32 = new FMatrixRMaj(3,3);
+		ConvertMatrixData.convert(H,H32);
+		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H32);
 		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
@@ -211,7 +216,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 	 * @see GBlurImageOps#gaussian
 	 */
 	public SimpleGray blurGaussian( double sigma, int radius ) {
-		return new SimpleGray(GBlurImageOps.gaussian(image, null, sigma, radius, null));
+		return new SimpleGray((T)GBlurImageOps.gaussian((ImageGray) image, null, sigma, radius, null));
 	}
 
 	/**
@@ -238,17 +243,19 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 	}
 
 	/**
-	 * @see GThresholdImageOps#localSquare
+	 * @see GThresholdImageOps#localMean
 	 */
 	public SimpleBinary thresholdSquare( int radius, double bias, boolean down ) {
-		return new SimpleBinary(GThresholdImageOps.localSquare(image, null, radius, bias, down, null, null));
+		return new SimpleBinary(GThresholdImageOps.localMean(image, null,
+				ConfigLength.fixed(radius), bias, down, null, null));
 	}
 
 	/**
 	 * @see GThresholdImageOps#localGaussian
 	 */
 	public SimpleBinary thresholdGaussian( int radius, double bias, boolean down ) {
-		return new SimpleBinary(GThresholdImageOps.localGaussian(image, null, radius, bias, down, null, null));
+		return new SimpleBinary(GThresholdImageOps.localGaussian(image, null,
+				ConfigLength.fixed(radius*2+1), bias, down, null, null));
 	}
 
 	/**
@@ -258,7 +265,8 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 	 * @param k Positive parameter used to tune threshold.  Try 0.3
 	 */
 	public SimpleBinary thresholdSauvola( int radius, double k , boolean down ) {
-		return new SimpleBinary(GThresholdImageOps.localSauvola(image, null, radius, (float) k, down));
+		return new SimpleBinary(GThresholdImageOps.localSauvola(image, null,
+				ConfigLength.fixed(radius*2+1), (float) k, down));
 	}
 
 	public SimpleGradient gradientSobel() {
@@ -349,7 +357,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 
 		GrayF32 a = new GrayF32(image.width,image.height);
 		GConvertImage.convert(image,a);
-		image = a;
+		image = (T)a;
 	}
 
 	/**
@@ -361,6 +369,6 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 
 		GrayU8 a = new GrayU8(image.width,image.height);
 		GConvertImage.convert(image,a);
-		image = a;
+		image = (T)a;
 	}
 }
