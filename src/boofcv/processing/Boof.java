@@ -34,6 +34,8 @@ import boofcv.alg.filter.derivative.GImageDerivativeOps;
 import boofcv.alg.flow.ConfigBroxWarping;
 import boofcv.alg.tracker.klt.PkltConfig;
 import boofcv.alg.tracker.sfot.SfotConfig;
+import boofcv.factory.background.ConfigBackgroundBasic;
+import boofcv.factory.background.ConfigBackgroundGmm;
 import boofcv.factory.feature.associate.FactoryAssociation;
 import boofcv.factory.feature.detdesc.FactoryDetectDescribe;
 import boofcv.factory.feature.tracker.FactoryPointTracker;
@@ -354,4 +356,11 @@ public class Boof {
 		return SimpleQrCode.generate(message,pixelPerModule);
 	}
 
+	public static SimpleMotionDetection motionDetector( ConfigBackgroundGmm config ) {
+		return new SimpleMotionDetection(config);
+	}
+
+	public static SimpleMotionDetection motionDetector( ConfigBackgroundBasic config ) {
+		return new SimpleMotionDetection(config);
+	}
 }

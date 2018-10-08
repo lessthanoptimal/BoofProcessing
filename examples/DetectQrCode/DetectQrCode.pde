@@ -1,5 +1,4 @@
-// Launches a webcam and searches for square-binary fiducials.  Draws a cube over the feducials when it
-// finds them and their ID number
+// Launches a webcam and searches for QR Codes, prints their message and draws their outline
 
 import processing.video.*;
 import boofcv.processing.*;
@@ -26,8 +25,26 @@ void draw() {
 
     image(cam, 0, 0);
 
-    for( QrCode f : found ) {
-      println("message             "+f.message);
+    // Configure the line's appearance
+    noFill();
+    strokeWeight(5);
+    stroke(255, 0, 0);
+
+    for( QrCode qr : found ) {
+      println("message             "+qr.message);
+
+        // Draw a line around each detected QR Code
+        for ( List<Polygon2D_F64> outline : qr ) {
+          beginShape();
+          for ( int i = 0; i < outline.size(); i++ ) {
+            Point2D_F64 p = outline.get(i);
+            vertex( p.x, p.y );
+          }
+          // close the loop
+          Point2D_F64 p = poly.get(0);
+          vertex( p.x, p.y );
+          endShape();
+        }
     }
   }
 }

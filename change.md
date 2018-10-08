@@ -3,8 +3,8 @@
 * Updated for BoofCV 0.31
 * Uses gradle wrapper now
 * QR Code support. Detecting and Generating
-* TODO Add background model
-* TODO Black Polygon
+* Add motion detection
+* TODO Add template matching
 
 ### Version 0.26
 
