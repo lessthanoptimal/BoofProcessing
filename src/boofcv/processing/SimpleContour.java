@@ -22,8 +22,8 @@ import boofcv.alg.filter.binary.Contour;
 import boofcv.alg.shapes.FitData;
 import boofcv.alg.shapes.ShapeFittingOps;
 import boofcv.struct.PointIndex_I32;
+import georegression.struct.curve.EllipseRotated_F64;
 import georegression.struct.point.Point2D_I32;
-import georegression.struct.shapes.EllipseRotated_F64;
 import processing.core.PImage;
 
 import java.util.ArrayList;
@@ -44,22 +44,19 @@ public class SimpleContour {
 	/**
 	 * Fits a polygon to the specified contour.
 	 *
-	 * @see ShapeFittingOps#fitPolygon(java.util.List, boolean, double, double, int)
+	 * @see ShapeFittingOps#fitPolygon(List, boolean, int, double)
 	 *
 	 * @param external true for the external contour or false for all the internal contours
-	 * @param splitFraction A line will be split if a point is more than this fraction of its
-	 *                     length away from the line. Try 0.05
-	 * @param minimumSideFraction The minimum allowed side length as a function of contour length.
+	 * @param minimumSideLength The minimum allowed side length in pixels. Try 10
+	 * @param cornerPenalty How much a corner is penalized. Try 0.25
 	 * @return List of polygons described by their vertexes
 	 */
-	public List<List<Point2D_I32>> fitPolygon( boolean external , double splitFraction, double minimumSideFraction ) {
+	public List<List<Point2D_I32>> fitPolygon( boolean external , int minimumSideLength , double cornerPenalty ) {
 		List<List<Point2D_I32>> polygons = new ArrayList<List<Point2D_I32>>();
-
-		int numIterations = 20;
 
 		if( external ) {
 			List<PointIndex_I32> output = ShapeFittingOps.
-					fitPolygon(contour.external, true, splitFraction, minimumSideFraction, numIterations);
+					fitPolygon(contour.external, true,minimumSideLength,cornerPenalty);
 
 			List<Point2D_I32> poly = new ArrayList<Point2D_I32>();
 			for( PointIndex_I32 p : output ) {
@@ -69,7 +66,7 @@ public class SimpleContour {
 		} else {
 			for( List<Point2D_I32> i : contour.internal ) {
 				List<PointIndex_I32> output = ShapeFittingOps.
-						fitPolygon(i, true, splitFraction, minimumSideFraction, numIterations);
+						fitPolygon(i, true, minimumSideLength,cornerPenalty);
 
 				List<Point2D_I32> poly = new ArrayList<Point2D_I32>();
 				for (PointIndex_I32 p : output) {
@@ -90,8 +87,8 @@ public class SimpleContour {
 	 * @param external true for the external contour or false for all the internal contours
 	 * @return List of found ellipses
 	 */
-	public List<EllipseRotated_F64> fitEllipses( boolean external ) {
-		List<EllipseRotated_F64> ellipses = new ArrayList<EllipseRotated_F64>();
+	public List<EllipseRotated_F64> fitEllipses(boolean external ) {
+		List<EllipseRotated_F64> ellipses = new ArrayList<>();
 
 		if( external ) {
 			FitData<EllipseRotated_F64> found = ShapeFittingOps.fitEllipse_I32(contour.external,0,false,null);

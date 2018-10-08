@@ -10,7 +10,7 @@ import processing.core.PImage;
  *
  * @author Peter Abeles
  */
-public class SimpleDenseOpticalFlow<T extends ImageBase> {
+public class SimpleDenseOpticalFlow<T extends ImageBase<T>> {
 	DenseOpticalFlow<T> alg;
 
 	ImageFlow flow = new ImageFlow(1,1);

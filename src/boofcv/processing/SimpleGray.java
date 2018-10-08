@@ -40,6 +40,7 @@ import boofcv.factory.feature.detect.line.ConfigHoughPolar;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
 import boofcv.factory.filter.derivative.FactoryDerivative;
 import boofcv.factory.geo.FactoryMultiView;
+import boofcv.struct.ConfigLength;
 import boofcv.struct.distort.PixelTransform2_F32;
 import boofcv.struct.geo.AssociatedPair;
 import boofcv.struct.image.GrayF32;
@@ -48,7 +49,9 @@ import boofcv.struct.image.GrayU8;
 import boofcv.struct.image.ImageGray;
 import georegression.struct.line.LineParametric2D_F32;
 import georegression.struct.point.Point2D_F64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.FMatrixRMaj;
+import org.ejml.ops.ConvertMatrixData;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -61,18 +64,18 @@ import java.util.List;
  * @author Peter Abeles
  */
 @SuppressWarnings("unchecked")
-public class SimpleGray extends SimpleImage<ImageGray>{
+public class SimpleGray<Gray extends ImageGray<Gray>> extends SimpleImage<Gray>{
 
-	public SimpleGray(ImageGray image) {
+	public SimpleGray(Gray image) {
 		super(image);
 	}
 
 	public SimpleGray blurMean( int radius ) {
-		return new SimpleGray(GBlurImageOps.mean(image, null, radius, null));
+		return new SimpleGray((Gray)GBlurImageOps.mean(image, null, radius, null));
 	}
 
 	public SimpleGray blurMedian( int radius ) {
-		return new SimpleGray(GBlurImageOps.median(image, null, radius));
+		return new SimpleGray((Gray)GBlurImageOps.median(image, null, radius));
 	}
 
 	/**
@@ -90,7 +93,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		int histogram[] = new int[256];
 		int transform[] = new int[256];
 
-		ImageStatistics.histogram((GrayU8) image, histogram);
+		ImageStatistics.histogram((GrayU8) image, 0,histogram);
 		EnhanceImageOps.equalize(histogram, transform);
 		EnhanceImageOps.applyTransform((GrayU8) image, transform, adjusted);
 
@@ -124,7 +127,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		if (!(image instanceof GrayU8))
 			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageGray adjusted = (ImageGray)image.createNew(image.width, image.height);
+		Gray adjusted = image.createNew(image.width, image.height);
 		GEnhanceImageOps.sharpen4(image, adjusted);
 
 		return new SimpleGray(adjusted);
@@ -141,7 +144,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		if (!(image instanceof GrayU8))
 			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
-		ImageGray adjusted = (ImageGray)image.createNew(image.width, image.height);
+		Gray adjusted = image.createNew(image.width, image.height);
 		GEnhanceImageOps.sharpen8(image, adjusted);
 
 		return new SimpleGray(adjusted);
@@ -181,10 +184,10 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 										 double x2, double y2,
 										 double x3, double y3 )
 	{
-		ImageGray output = (ImageGray)image.createNew(outWidth,outHeight);
+		Gray output = image.createNew(outWidth,outHeight);
 
 		// Homography estimation algorithm.  Requires a minimum of 4 points
-		Estimate1ofEpipolar computeHomography = FactoryMultiView.computeHomography(true);
+		Estimate1ofEpipolar computeHomography = FactoryMultiView.homographyDLT(true);
 
 		// Specify the pixel coordinates from destination to target
 		ArrayList<AssociatedPair> associatedPairs = new ArrayList<AssociatedPair>();
@@ -194,11 +197,13 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 		associatedPairs.add(new AssociatedPair(new Point2D_F64(0,outHeight-1),new Point2D_F64(x3,y3)));
 
 		// Compute the homography
-		DenseMatrix64F H = new DenseMatrix64F(3,3);
+		DMatrixRMaj H = new DMatrixRMaj(3,3);
 		computeHomography.process(associatedPairs, H);
+		FMatrixRMaj H32 = new FMatrixRMaj(3,3);
+		ConvertMatrixData.convert(H,H32);
 
 		// Create the transform for distorting the image
-		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H);
+		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H32);
 		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
@@ -211,7 +216,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 	 * @see GBlurImageOps#gaussian
 	 */
 	public SimpleGray blurGaussian( double sigma, int radius ) {
-		return new SimpleGray(GBlurImageOps.gaussian(image, null, sigma, radius, null));
+		return new SimpleGray((Gray)GBlurImageOps.gaussian(image, null, sigma, radius, null));
 	}
 
 	/**
@@ -238,27 +243,88 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 	}
 
 	/**
-	 * @see GThresholdImageOps#localSquare
+	 * @see GThresholdImageOps#localMean
 	 */
-	public SimpleBinary thresholdSquare( int radius, double bias, boolean down ) {
-		return new SimpleBinary(GThresholdImageOps.localSquare(image, null, radius, bias, down, null, null));
+	public SimpleBinary thresholdMean( int Width, double bias, boolean down ) {
+		ConfigLength config = new ConfigLength();
+		config.length = Width;
+		return new SimpleBinary(GThresholdImageOps.localMean(image, null, config, bias, down, null, null));
 	}
 
 	/**
 	 * @see GThresholdImageOps#localGaussian
 	 */
-	public SimpleBinary thresholdGaussian( int radius, double bias, boolean down ) {
-		return new SimpleBinary(GThresholdImageOps.localGaussian(image, null, radius, bias, down, null, null));
+	public SimpleBinary thresholdGaussian( int Width, double bias, boolean down ) {
+		ConfigLength config = new ConfigLength();
+		config.length = Width;
+		return new SimpleBinary(GThresholdImageOps.localGaussian(image, null, config, bias, down, null, null));
 	}
 
 	/**
 	 * @see GThresholdImageOps#localSauvola
 	 *
-	 * @param radius Radius of adaptive region
+	 * @param width Width of the adaptive region
 	 * @param k Positive parameter used to tune threshold.  Try 0.3
 	 */
-	public SimpleBinary thresholdSauvola( int radius, double k , boolean down ) {
-		return new SimpleBinary(GThresholdImageOps.localSauvola(image, null, radius, (float) k, down));
+	public SimpleBinary thresholdSauvola( int width, double k , boolean down ) {
+		ConfigLength config = new ConfigLength();
+		config.length = width;
+		return new SimpleBinary(GThresholdImageOps.localSauvola(image, null, config, (float) k, down));
+	}
+
+	/**
+	 * @see GThresholdImageOps#localNick
+	 *
+	 * @param width Width of the adaptive region
+	 * @param k Positive parameter used to tune threshold.  Try -0.1 to -0.2
+	 */
+	public SimpleBinary thresholdNick( int width, double k , boolean down ) {
+		ConfigLength config = new ConfigLength();
+		config.length = width;
+		return new SimpleBinary(GThresholdImageOps.localNick(image, null, config, (float) k, down));
+	}
+
+	/**
+	 *
+	 * @see GThresholdImageOps#blockMean
+	 *
+	 * @param width Width of square region.
+	 * @param scale Scale factor adjust for threshold.  1.0 means no change.
+	 * @param down Should it threshold up or down.
+	 */
+	public SimpleBinary thresholdBlockMean( int width, double scale , boolean down ) {
+		ConfigLength config = new ConfigLength();
+		config.length = width;
+		return new SimpleBinary(GThresholdImageOps.blockMean(image, null, config, scale, down));
+	}
+
+	/**
+	 *
+	 * @see GThresholdImageOps#blockMinMax
+	 *
+	 * @param width Width of square region.
+	 * @param scale Scale factor adjust for threshold.  1.0 means no change.
+	 * @param down Should it threshold up or down.
+	 * @param textureThreshold If the min and max values are within this threshold the pixel will be set to 1.
+	 */
+	public SimpleBinary thresholdBlockMinMax( int width, double scale , boolean down , double textureThreshold ) {
+		ConfigLength config = new ConfigLength();
+		config.length = width;
+		return new SimpleBinary(GThresholdImageOps.blockMinMax(image, null, config, scale, down, textureThreshold));
+	}
+
+	/**
+	 *
+	 * @see GThresholdImageOps#blockOtsu
+	 *
+	 * @param width Width of square region.
+	 * @param scale Scale factor adjust for threshold.  1.0 means no change.
+	 * @param down Should it threshold up or down.
+	 */
+	public SimpleBinary thresholdBlockOtsu( int width, double scale , boolean down ) {
+		ConfigLength config = new ConfigLength();
+		config.length = width;
+		return new SimpleBinary(GThresholdImageOps.blockOtsu(image, null, false,config,0, scale, down));
 	}
 
 	public SimpleGradient gradientSobel() {
@@ -349,7 +415,7 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 
 		GrayF32 a = new GrayF32(image.width,image.height);
 		GConvertImage.convert(image,a);
-		image = a;
+		image = (Gray)a;
 	}
 
 	/**
@@ -361,6 +427,6 @@ public class SimpleGray extends SimpleImage<ImageGray>{
 
 		GrayU8 a = new GrayU8(image.width,image.height);
 		GConvertImage.convert(image,a);
-		image = a;
+		image = (Gray)a;
 	}
 }

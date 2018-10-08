@@ -23,7 +23,7 @@ all the dependencies.  From the commandline you can run the Gradle script by typ
 
 ```bash
 cd BoofProcessing
-gradle processingZip
+./gradlew processingZip
 ```
 
 Then after a little bit boofcv_processing.zip should appear in the BoofProcessing directory.  This can then be opened 

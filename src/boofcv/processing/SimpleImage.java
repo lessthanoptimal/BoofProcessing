@@ -26,7 +26,7 @@ import boofcv.struct.image.ImageType;
  *
  * @author Peter Abeles
  */
-public class SimpleImage<T extends ImageBase> {
+public class SimpleImage<T extends ImageBase<T>> {
 	protected T image;
 
 	public SimpleImage(T image) {

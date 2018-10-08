@@ -37,10 +37,10 @@ void draw() {
   for( int i = 0; i < location.size(); i++ ) {
     // Scale isn't provided in the simplified interface because its not required for 
     // standard assocation algorithms
-    double scale = ddp.getDetectDescribe().getScale(i);    
+    float radius = (float)ddp.getDetectDescribe().getRadius(i);
     // Get the feature's location
     Point2D_F64 p = location.get(i);
 
-    ellipse((float)p.x, (float)p.y, (float)(2.5*scale), (float)(2.5*scale)); 
+    ellipse((float)p.x, (float)p.y, radius, radius);
   }
 }

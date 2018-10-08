@@ -46,17 +46,25 @@ public class SimpleFiducial {
 	CameraPinholeRadial intrinsic;
 
 	public SimpleFiducial(FiducialDetector detector) {
+		setDetector(detector);
+	}
+
+	protected SimpleFiducial() {
+	}
+
+	protected void setDetector(FiducialDetector detector) {
 		this.detector = detector;
 		boofImage = detector.getInputType().createImage(1,1);
 	}
 
-	public void setIntrinsic( CameraPinholeRadial intrinsic ) {
-		detector.setLensDistortion(LensDistortionOps.transformPoint(intrinsic));
+	public void setIntrinsic(CameraPinholeRadial intrinsic ) {
+		detector.setLensDistortion(LensDistortionOps.narrow(intrinsic),
+				intrinsic.width,intrinsic.height);
 		this.intrinsic = intrinsic;
 	}
 
 	public void guessCrappyIntrinsic( int width , int height ) {
-		setIntrinsic(PerspectiveOps.createIntrinsic(width,height,40));
+		setIntrinsic(PerspectiveOps.createIntrinsic(width,height,70));
 	}
 
 	public List<FiducialFound> detect( PImage image ) {
@@ -75,7 +83,7 @@ public class SimpleFiducial {
 				detector.getFiducialToCamera(i, fiducialToWorld);
 			}
 			Point2D_F64 location = new Point2D_F64();
-			detector.getImageLocation(i , location);
+			detector.getCenter(i , location);
 
 
 			found.add( new FiducialFound(id,width,location, fiducialToWorld) );

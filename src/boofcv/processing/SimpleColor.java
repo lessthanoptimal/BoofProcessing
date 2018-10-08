@@ -34,7 +34,9 @@ import boofcv.struct.image.GrayU8;
 import boofcv.struct.image.ImageGray;
 import boofcv.struct.image.Planar;
 import georegression.struct.point.Point2D_F64;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.data.FMatrixRMaj;
+import org.ejml.ops.ConvertMatrixData;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -46,18 +48,18 @@ import java.util.ArrayList;
  * @author Peter Abeles
  */
 @SuppressWarnings("unchecked")
-public class SimpleColor extends SimpleImage<Planar>{
+public class SimpleColor<Gray extends ImageGray<Gray>> extends SimpleImage<Planar<Gray>>{
 
-	public SimpleColor(Planar image) {
+	public SimpleColor(Planar<Gray> image) {
 		super(image);
 	}
 
 	public SimpleColor blurMean( int radius ) {
-		return new SimpleColor(GBlurImageOps.mean(image, null, radius, null));
+		return new SimpleColor((Planar<Gray>)GBlurImageOps.mean(image, null, radius, null));
 	}
 
 	public SimpleColor blurMedian( int radius ) {
-		return new SimpleColor(GBlurImageOps.median(image, null, radius));
+		return new SimpleColor((Planar<Gray>)GBlurImageOps.median(image, null, radius));
 	}
 
 	/**
@@ -73,10 +75,10 @@ public class SimpleColor extends SimpleImage<Planar>{
 										 double x2, double y2,
 										 double x3, double y3 )
 	{
-		Planar output = (Planar)image.createNew(outWidth,outHeight);
+		Planar<Gray> output = image.createNew(outWidth,outHeight);
 
 		// Homography estimation algorithm.  Requires a minimum of 4 points
-		Estimate1ofEpipolar computeHomography = FactoryMultiView.computeHomography(true);
+		Estimate1ofEpipolar computeHomography = FactoryMultiView.homographyDLT(true);
 
 		// Specify the pixel coordinates from destination to target
 		ArrayList<AssociatedPair> associatedPairs = new ArrayList<AssociatedPair>();
@@ -86,11 +88,13 @@ public class SimpleColor extends SimpleImage<Planar>{
 		associatedPairs.add(new AssociatedPair(new Point2D_F64(0,outHeight-1),new Point2D_F64(x3,y3)));
 
 		// Compute the homography
-		DenseMatrix64F H = new DenseMatrix64F(3,3);
+		DMatrixRMaj H = new DMatrixRMaj(3,3);
 		computeHomography.process(associatedPairs, H);
+		FMatrixRMaj H32 = new FMatrixRMaj(3,3);
+		ConvertMatrixData.convert(H,H32);
 
 		// Create the transform for distorting the image
-		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H);
+		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H32);
 		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
@@ -103,7 +107,7 @@ public class SimpleColor extends SimpleImage<Planar>{
 	 * @see boofcv.alg.filter.blur.GBlurImageOps#gaussian
 	 */
 	public SimpleColor blurGaussian( double sigma, int radius ) {
-		return new SimpleColor(GBlurImageOps.gaussian(image, null, sigma, radius, null));
+		return new SimpleColor((Planar<Gray>)GBlurImageOps.gaussian(image, null, sigma, radius, null));
 	}
 
 	/**
@@ -129,9 +133,9 @@ public class SimpleColor extends SimpleImage<Planar>{
 	public PImage convert() {
 		PImage out = new PImage(image.width,image.height, PConstants.RGB);
 		if( image.getBandType() == GrayF32.class) {
-			ConvertProcessing.convert_PF32_RGB(image, out);
+			ConvertProcessing.convert_PF32_RGB((Planar<GrayF32>)image, out);
 		} else if( image.getBandType() == GrayU8.class ) {
-			ConvertProcessing.convert_PU8_RGB(image,out);
+			ConvertProcessing.convert_PU8_RGB((Planar<GrayU8>)image,out);
 		} else {
 			throw new RuntimeException("Unknown image type");
 		}
