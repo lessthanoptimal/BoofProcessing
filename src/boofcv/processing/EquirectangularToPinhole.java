@@ -61,13 +61,10 @@ public class EquirectangularToPinhole {
     }
 
     public void setOrientation(DMatrixRMaj R ) {
-        ConvertMatrixData.convert(R,equiToPinhole.getRotation());
+        FMatrixRMaj R32 = new FMatrixRMaj(3,3);
+        ConvertMatrixData.convert(R,R32);
+        equiToPinhole.getRotation().set(R32);
     }
-
-    public void setOrientation(FMatrixRMaj R ) {
-        equiToPinhole.getRotation().set(R);
-    }
-
 
     public void setEquirectangular(PImage image ) {
         if( equiImage.width != image.width || equiImage.height != image.height ) {

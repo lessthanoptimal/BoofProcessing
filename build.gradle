@@ -4,6 +4,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -20,8 +21,8 @@ configurations {
 }
 
 dependencies {
-    compile group: 'org.boofcv', name: 'boofcv-core', version: '0.30'
     compile group: 'org.processing', name: 'core', version: '3.3.7'
+    compile group: 'org.boofcv', name: 'boofcv-core', version: '0.31'
 
     processing files("core.jar")
 }
@@ -126,6 +127,9 @@ task processingDirectory( dependsOn:[processingJar,processingJavaDoc]) {
         myCopy( 'data/example/enhance/dark.png',        'tmp/boofcv_processing/examples/ImageEnhancement')
         myCopy( 'data/example/simple_objects.jpg',      'tmp/boofcv_processing/examples/DetectLines')
         myCopy( 'data/example/goals_and_stuff.jpg',     'tmp/boofcv_processing/examples/RemovePerspective')
+        myCopy( 'data/example/template/desktop.png',    'tmp/boofcv_processing/examples/Templates')
+        myCopy( 'data/example/template/cursor.png',     'tmp/boofcv_processing/examples/Templates')
+        myCopy( 'data/example/template/cursor_mask.png', 'tmp/boofcv_processing/examples/Templates')
         myCopy( 'data/example/spherical/equirectangular_half_dome_01.jpg','tmp/boofcv_processing/examples/EquiToPinhole')
         myCopy( 'data/example/recognition/pixabay/cat01.jpg','tmp/boofcv_processing/examples/ImageClassification')
         myCopy( javadoc.destinationDir,                 'tmp/boofcv_processing/reference')

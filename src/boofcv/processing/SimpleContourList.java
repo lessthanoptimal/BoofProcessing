@@ -32,7 +32,7 @@ import java.util.List;
  * @author Peter Abeles
  */
 public class SimpleContourList {
-	List<SimpleContour> contour;
+	List<SimpleContour> contour = new ArrayList<SimpleContour>();
 	// input image width and height
 	int width,height;
 
@@ -45,9 +45,11 @@ public class SimpleContourList {
 	/**
 	 * Fits a polygon to the specified contour.
 	 *
-	 * @see boofcv.alg.shapes.ShapeFittingOps#fitPolygon(java.util.List, boolean, int, double)
+	 * @see boofcv.alg.shapes.ShapeFittingOps#fitPolygon
 	 *
 	 * @param external true for the external contour or false for all the internal contours
+	 * @param minimumSideLength The minimum allowed side length in pixels. Try 10
+	 * @param cornerPenalty How much a corner is penalized. Try 0.25
 	 * @return List of polygons described by their vertexes
 	 */
 	public List<List<Point2D_I32>> fitPolygons( boolean external , int minimumSideLength , double cornerPenalty ) {
@@ -68,7 +70,7 @@ public class SimpleContourList {
 	 * @param external true for the external contour or false for all the internal contours
 	 * @return List of found ellipses
 	 */
-	public List<EllipseRotated_F64> fitEllipses( boolean external ) {
+	public List<EllipseRotated_F64> fitEllipses(boolean external ) {
 		List<EllipseRotated_F64> ellipses = new ArrayList<>();
 
 		for (int i = 0; i < contour.size(); i++) {

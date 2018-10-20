@@ -48,18 +48,18 @@ import java.util.ArrayList;
  * @author Peter Abeles
  */
 @SuppressWarnings("unchecked")
-public class SimpleColor<T extends ImageGray<T>> extends SimpleImage<Planar<T>>{
+public class SimpleColor<Gray extends ImageGray<Gray>> extends SimpleImage<Planar<Gray>>{
 
-	public SimpleColor(Planar image) {
+	public SimpleColor(Planar<Gray> image) {
 		super(image);
 	}
 
 	public SimpleColor blurMean( int radius ) {
-		return new SimpleColor((Planar<T>)GBlurImageOps.mean(image, null, radius, null));
+		return new SimpleColor((Planar<Gray>)GBlurImageOps.mean(image, null, radius, null));
 	}
 
 	public SimpleColor blurMedian( int radius ) {
-		return new SimpleColor((Planar<T>)GBlurImageOps.median(image, null, radius));
+		return new SimpleColor((Planar<Gray>)GBlurImageOps.median(image, null, radius));
 	}
 
 	/**
@@ -75,10 +75,10 @@ public class SimpleColor<T extends ImageGray<T>> extends SimpleImage<Planar<T>>{
 										 double x2, double y2,
 										 double x3, double y3 )
 	{
-		Planar<T> output = image.createNew(outWidth,outHeight);
+		Planar<Gray> output = image.createNew(outWidth,outHeight);
 
 		// Homography estimation algorithm.  Requires a minimum of 4 points
-		Estimate1ofEpipolar computeHomography = FactoryMultiView.computeHomographyDLT(true);
+		Estimate1ofEpipolar computeHomography = FactoryMultiView.homographyDLT(true);
 
 		// Specify the pixel coordinates from destination to target
 		ArrayList<AssociatedPair> associatedPairs = new ArrayList<AssociatedPair>();
@@ -90,10 +90,10 @@ public class SimpleColor<T extends ImageGray<T>> extends SimpleImage<Planar<T>>{
 		// Compute the homography
 		DMatrixRMaj H = new DMatrixRMaj(3,3);
 		computeHomography.process(associatedPairs, H);
-
-		// Create the transform for distorting the image
 		FMatrixRMaj H32 = new FMatrixRMaj(3,3);
 		ConvertMatrixData.convert(H,H32);
+
+		// Create the transform for distorting the image
 		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H32);
 		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
@@ -107,7 +107,7 @@ public class SimpleColor<T extends ImageGray<T>> extends SimpleImage<Planar<T>>{
 	 * @see boofcv.alg.filter.blur.GBlurImageOps#gaussian
 	 */
 	public SimpleColor blurGaussian( double sigma, int radius ) {
-		return new SimpleColor((Planar<T>)GBlurImageOps.gaussian(image, null, sigma, radius, null));
+		return new SimpleColor((Planar<Gray>)GBlurImageOps.gaussian(image, null, sigma, radius, null));
 	}
 
 	/**

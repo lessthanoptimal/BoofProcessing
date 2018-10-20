@@ -34,7 +34,7 @@ void setup() {
   contours = new SimpleContourList(prunedList, input.width, input.height);
 
   // Fit polygons to external contours
-  polygons = contours.fitPolygons(true, 15, 0.50);
+  polygons = contours.fitPolygons(true, 20, 0.25);
 
   surface.setSize(input.width, input.height);
 }

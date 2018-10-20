@@ -44,7 +44,7 @@ public class SimpleContour {
 	/**
 	 * Fits a polygon to the specified contour.
 	 *
-	 * @see ShapeFittingOps#fitPolygon(java.util.List, boolean, int, double)
+	 * @see ShapeFittingOps#fitPolygon(List, boolean, int, double)
 	 *
 	 * @param external true for the external contour or false for all the internal contours
 	 * @param minimumSideLength The minimum allowed side length in pixels. Try 10
@@ -52,11 +52,11 @@ public class SimpleContour {
 	 * @return List of polygons described by their vertexes
 	 */
 	public List<List<Point2D_I32>> fitPolygon( boolean external , int minimumSideLength , double cornerPenalty ) {
-		List<List<Point2D_I32>> polygons = new ArrayList<>();
+		List<List<Point2D_I32>> polygons = new ArrayList<List<Point2D_I32>>();
 
 		if( external ) {
 			List<PointIndex_I32> output = ShapeFittingOps.
-					fitPolygon(contour.external, true, minimumSideLength, cornerPenalty);
+					fitPolygon(contour.external, true,minimumSideLength,cornerPenalty);
 
 			List<Point2D_I32> poly = new ArrayList<Point2D_I32>();
 			for( PointIndex_I32 p : output ) {
@@ -66,7 +66,7 @@ public class SimpleContour {
 		} else {
 			for( List<Point2D_I32> i : contour.internal ) {
 				List<PointIndex_I32> output = ShapeFittingOps.
-						fitPolygon(i, true, minimumSideLength, cornerPenalty);
+						fitPolygon(i, true, minimumSideLength,cornerPenalty);
 
 				List<Point2D_I32> poly = new ArrayList<Point2D_I32>();
 				for (PointIndex_I32 p : output) {

@@ -47,6 +47,7 @@ public class ConvertProcessing {
 	}
 
 	public static void convert_RGB_F32( PImage input , GrayF32 output ) {
+		output.reshape(input.width,input.height);
 
 		int indexInput = 0;
 		for( int y = 0; y < input.height; y++ ) {
@@ -64,6 +65,7 @@ public class ConvertProcessing {
 	}
 
 	public static void convert_RGB_U8( PImage input , GrayU8 output ) {
+		output.reshape(input.width,input.height);
 
 		int indexInput = 0;
 		for( int y = 0; y < input.height; y++ ) {
@@ -145,6 +147,7 @@ public class ConvertProcessing {
 	}
 
 	public static void convert_RGB_PF32(PImage input , Planar<GrayF32> output ) {
+		output.reshape(input.width,input.height);
 
 		GrayF32 red = output.getBand(0);
 		GrayF32 green = output.getBand(1);
@@ -164,6 +167,7 @@ public class ConvertProcessing {
 	}
 
 	public static void convert_RGB_PU8(PImage input , Planar<GrayU8> output ) {
+		output.reshape(input.width,input.height);
 
 		GrayU8 red = output.getBand(0);
 		GrayU8 green = output.getBand(1);
