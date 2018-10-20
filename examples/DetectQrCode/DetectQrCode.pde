@@ -3,6 +3,8 @@
 import processing.video.*;
 import boofcv.processing.*;
 import java.util.*;
+import georegression.struct.shapes.Polygon2D_F64;
+import georegression.struct.point.Point2D_F64;
 import boofcv.alg.fiducial.qrcode.QrCode;
 
 Capture cam;
@@ -33,18 +35,16 @@ void draw() {
     for( QrCode qr : found ) {
       println("message             "+qr.message);
 
-        // Draw a line around each detected QR Code
-        for ( List<Polygon2D_F64> outline : qr ) {
-          beginShape();
-          for ( int i = 0; i < outline.size(); i++ ) {
-            Point2D_F64 p = outline.get(i);
-            vertex( p.x, p.y );
-          }
-          // close the loop
-          Point2D_F64 p = poly.get(0);
-          vertex( p.x, p.y );
-          endShape();
-        }
+     // Draw a line around each detected QR Code
+      beginShape();
+      for( int i = 0; i < qr.bounds.size(); i++ ) {
+          Point2D_F64 p = qr.bounds.get(i);
+          vertex( (int)p.x, (int)p.y );
+      }
+      // close the loop
+      Point2D_F64 p = qr.bounds.get(0);
+      vertex( (int)p.x, (int)p.y );
+      endShape();
     }
   }
 }

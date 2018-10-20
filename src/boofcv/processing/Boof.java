@@ -30,6 +30,7 @@ import boofcv.abst.tracker.ConfigCirculantTracker;
 import boofcv.abst.tracker.ConfigComaniciu2003;
 import boofcv.abst.tracker.ConfigTld;
 import boofcv.abst.tracker.TrackerObjectQuad;
+import boofcv.alg.feature.detect.template.TemplateMatching;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
 import boofcv.alg.flow.ConfigBroxWarping;
 import boofcv.alg.tracker.klt.PkltConfig;
@@ -38,6 +39,8 @@ import boofcv.factory.background.ConfigBackgroundBasic;
 import boofcv.factory.background.ConfigBackgroundGmm;
 import boofcv.factory.feature.associate.FactoryAssociation;
 import boofcv.factory.feature.detdesc.FactoryDetectDescribe;
+import boofcv.factory.feature.detect.template.FactoryTemplateMatching;
+import boofcv.factory.feature.detect.template.TemplateScoreType;
 import boofcv.factory.feature.tracker.FactoryPointTracker;
 import boofcv.factory.fiducial.ConfigFiducialBinary;
 import boofcv.factory.fiducial.ConfigFiducialImage;
@@ -362,5 +365,12 @@ public class Boof {
 
 	public static SimpleMotionDetection motionDetector( ConfigBackgroundBasic config ) {
 		return new SimpleMotionDetection(config);
+	}
+
+	public static SimpleTemplateMatching templateMatching( TemplateScoreType type ) {
+		if( type == null )
+			type = TemplateScoreType.SUM_DIFF_SQ;
+		TemplateMatching<GrayU8> alg =  FactoryTemplateMatching.createMatcher(type,GrayU8.class);
+		return new SimpleTemplateMatching(alg);
 	}
 }

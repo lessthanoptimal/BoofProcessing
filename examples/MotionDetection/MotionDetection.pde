@@ -1,11 +1,13 @@
 // Launches a webcam and searches for QR Codes, prints their message and draws their outline
 
 import processing.video.*;
+import boofcv.factory.background.*;
 import boofcv.processing.*;
 import java.util.*;
 
 Capture cam;
 SimpleMotionDetection detector;
+int frames=0;
 
 void setup() {
   // Open up the camera so that it has a video feed to process
@@ -23,9 +25,13 @@ void draw() {
   if (cam.available() == true) {
     cam.read();
 
-    SimpleBinary binary = detector.segment(cam);
-
-    image(binary.visualize(), 0, 0);
+    // first couple of frames can be bad as the camera adjusts its settings causing the whole
+    // image to be marked as motion
+    if( frames >= 5 ) {
+      SimpleBinary binary = detector.segment(cam);
+      image(binary.visualize(), 0, 0);
+    }
+    frames++;
   }
 }
 
