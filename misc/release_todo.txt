@@ -1,6 +1,6 @@
 # Update library.properties
 # Update build.gradle
 # Run though all examples
-# gradle processingZip
+# ./gradlew processingZip
 # scp library.properties pabeles@boofcv.org:boofcv.org/processing/boofcv_processing.txt
 # scp boofcv_processing.zip  pabeles@boofcv.org:boofcv.org/processing/

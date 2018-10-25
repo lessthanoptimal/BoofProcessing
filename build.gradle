@@ -15,16 +15,9 @@ repositories {
     }
 }
 
-configurations {
-    processing
-    compile.extendsFrom processing
-}
-
 dependencies {
-    compile group: 'org.processing', name: 'core', version: '3.3.7'
+    compileOnly group: 'org.processing', name: 'core', version: '3.3.7'
     compile group: 'org.boofcv', name: 'boofcv-core', version: '0.31'
-
-    processing files("core.jar")
 }
 
 test {
@@ -59,7 +52,7 @@ task dependenciesJar(type: Jar, dependsOn:jar) {
 
     dependsOn configurations.runtime
     from {
-        (configurations.runtime - configurations.processing).collect {
+        configurations.runtime.collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
