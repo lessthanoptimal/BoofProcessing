@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class SimpleTemplateMatching {
 
-    TemplateMatching<GrayU8> matcher;
+    public TemplateMatching<GrayU8> matcher;
 
     GrayU8 ginput = new GrayU8(1,1);
     GrayU8 gtemplate = new GrayU8(1,1);
