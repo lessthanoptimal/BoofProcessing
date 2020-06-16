@@ -18,8 +18,8 @@
 
 package boofcv.processing;
 
-import boofcv.abst.feature.tracker.PointTrack;
-import boofcv.abst.feature.tracker.PointTracker;
+import boofcv.abst.tracker.PointTrack;
+import boofcv.abst.tracker.PointTracker;
 import boofcv.core.image.GeneralizedImageOps;
 import boofcv.struct.image.GrayF32;
 import boofcv.struct.image.GrayU8;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class SimpleTrackerPoints {
 	PointTracker tracker;
-	List<PointTrack> list = new ArrayList<PointTrack>();
+	List<PointTrack> list = new ArrayList<>();
 	Class imageType;
 	ImageGray gray;
 
@@ -77,7 +77,7 @@ public class SimpleTrackerPoints {
 	}
 
 	public Point2D_F64 getLocation( int index ) {
-		return list.get(index);
+		return list.get(index).pixel;
 	}
 
 	public long getTrackID( int index ) {

@@ -1,3 +1,8 @@
+### Version 0.36
+
+* Updated for BoofCV 0.36
+* TODO Random Dot Markers
+
 ### Version 0.31
 
 * Updated for BoofCV 0.31

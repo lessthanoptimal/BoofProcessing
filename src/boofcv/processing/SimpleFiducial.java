@@ -19,9 +19,9 @@
 package boofcv.processing;
 
 import boofcv.abst.fiducial.FiducialDetector;
-import boofcv.alg.distort.LensDistortionOps;
 import boofcv.alg.geo.PerspectiveOps;
-import boofcv.struct.calib.CameraPinholeRadial;
+import boofcv.factory.distort.LensDistortionFactory;
+import boofcv.struct.calib.CameraPinholeBrown;
 import boofcv.struct.image.ImageBase;
 import georegression.struct.point.Point2D_F64;
 import georegression.struct.point.Point2D_I32;
@@ -43,7 +43,7 @@ import java.util.List;
 public class SimpleFiducial {
 	FiducialDetector detector;
 	ImageBase boofImage;
-	CameraPinholeRadial intrinsic;
+	CameraPinholeBrown intrinsic;
 
 	public SimpleFiducial(FiducialDetector detector) {
 		setDetector(detector);
@@ -57,9 +57,8 @@ public class SimpleFiducial {
 		boofImage = detector.getInputType().createImage(1,1);
 	}
 
-	public void setIntrinsic(CameraPinholeRadial intrinsic ) {
-		detector.setLensDistortion(LensDistortionOps.narrow(intrinsic),
-				intrinsic.width,intrinsic.height);
+	public void setIntrinsic(CameraPinholeBrown intrinsic ) {
+		detector.setLensDistortion(LensDistortionFactory.narrow(intrinsic),intrinsic.width,intrinsic.height);
 		this.intrinsic = intrinsic;
 	}
 
@@ -105,7 +104,7 @@ public class SimpleFiducial {
 		corners[7] = new Point3D_F64(-r, r,r);
 
 		Se3_F64 targetToCamera = fiducial.getFiducialToCamera();
-		Point2D_I32 pixel[] = new Point2D_I32[8];
+		Point2D_I32[] pixel = new Point2D_I32[8];
 		Point2D_F64 a = new Point2D_F64();
 		for (int i = 0; i < 8; i++) {
 			Point3D_F64 c = corners[i];

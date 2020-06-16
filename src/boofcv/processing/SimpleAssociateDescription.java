@@ -3,7 +3,7 @@ package boofcv.processing;
 import boofcv.abst.feature.associate.AssociateDescription;
 import boofcv.struct.feature.AssociatedIndex;
 import boofcv.struct.feature.TupleDesc;
-import org.ddogleg.struct.FastQueue;
+import org.ddogleg.struct.FastArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,8 @@ import java.util.List;
 public class SimpleAssociateDescription< Desc extends TupleDesc > {
 
 	AssociateDescription<Desc> associate;
-	FastQueue<Desc> queueSrc = new FastQueue(TupleDesc.class,false);
-	FastQueue<Desc> queueDst = new FastQueue(TupleDesc.class,false);
+	FastArray<Desc> queueSrc = new FastArray(TupleDesc.class);
+	FastArray<Desc> queueDst = new FastArray(TupleDesc.class);
 
 	public SimpleAssociateDescription(AssociateDescription<Desc> associate) {
 		this.associate = associate;

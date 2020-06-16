@@ -84,13 +84,13 @@ public class SimpleBinary {
 
 	public SimpleBinary edge4() {
 		GrayU8 out = new GrayU8(image.width,image.height);
-		BinaryImageOps.edge4(image,out);
+		BinaryImageOps.edge4(image,out,true);
 		return new SimpleBinary(out);
 	}
 
 	public SimpleBinary edge8() {
 		GrayU8 out = new GrayU8(image.width,image.height);
-		BinaryImageOps.edge8(image,out);
+		BinaryImageOps.edge8(image,out,true);
 		return new SimpleBinary(out);
 	}
 

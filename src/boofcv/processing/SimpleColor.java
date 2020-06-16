@@ -18,16 +18,14 @@
 
 package boofcv.processing;
 
+import boofcv.abst.distort.FDistort;
 import boofcv.abst.geo.Estimate1ofEpipolar;
-import boofcv.alg.distort.DistortImageOps;
 import boofcv.alg.distort.PointToPixelTransform_F32;
 import boofcv.alg.distort.PointTransformHomography_F32;
 import boofcv.alg.filter.blur.GBlurImageOps;
-import boofcv.alg.interpolate.InterpolationType;
 import boofcv.core.image.GConvertImage;
 import boofcv.core.image.GeneralizedImageOps;
 import boofcv.factory.geo.FactoryMultiView;
-import boofcv.struct.distort.PixelTransform2_F32;
 import boofcv.struct.geo.AssociatedPair;
 import boofcv.struct.image.GrayF32;
 import boofcv.struct.image.GrayU8;
@@ -55,11 +53,11 @@ public class SimpleColor<Gray extends ImageGray<Gray>> extends SimpleImage<Plana
 	}
 
 	public SimpleColor blurMean( int radius ) {
-		return new SimpleColor((Planar<Gray>)GBlurImageOps.mean(image, null, radius, null));
+		return new SimpleColor((Planar<Gray>)GBlurImageOps.mean(image, null, radius,null, null));
 	}
 
 	public SimpleColor blurMedian( int radius ) {
-		return new SimpleColor((Planar<Gray>)GBlurImageOps.median(image, null, radius));
+		return new SimpleColor((Planar<Gray>)GBlurImageOps.median(image, null, radius,null));
 	}
 
 	/**
@@ -95,10 +93,9 @@ public class SimpleColor<Gray extends ImageGray<Gray>> extends SimpleImage<Plana
 
 		// Create the transform for distorting the image
 		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H32);
-		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
-		DistortImageOps.distortPL(image, output, pixelTransform, null, InterpolationType.BILINEAR);
+		new FDistort(image,output).transform(new PointToPixelTransform_F32(homography)).apply();
 
 		return new SimpleColor(output);
 	}

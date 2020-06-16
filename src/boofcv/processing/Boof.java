@@ -22,26 +22,22 @@ import boofcv.abst.feature.associate.AssociateDescription;
 import boofcv.abst.feature.associate.ScoreAssociation;
 import boofcv.abst.feature.detdesc.ConfigCompleteSift;
 import boofcv.abst.feature.detdesc.DetectDescribePoint;
-import boofcv.abst.feature.detect.interest.ConfigGeneralDetector;
-import boofcv.abst.feature.tracker.PointTracker;
+import boofcv.abst.feature.detect.interest.ConfigPointDetector;
 import boofcv.abst.flow.DenseOpticalFlow;
 import boofcv.abst.segmentation.ImageSuperpixels;
-import boofcv.abst.tracker.ConfigCirculantTracker;
-import boofcv.abst.tracker.ConfigComaniciu2003;
-import boofcv.abst.tracker.ConfigTld;
-import boofcv.abst.tracker.TrackerObjectQuad;
+import boofcv.abst.tracker.*;
 import boofcv.alg.feature.detect.template.TemplateMatching;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
 import boofcv.alg.flow.ConfigBroxWarping;
-import boofcv.alg.tracker.klt.PkltConfig;
+import boofcv.alg.tracker.klt.ConfigPKlt;
 import boofcv.alg.tracker.sfot.SfotConfig;
 import boofcv.factory.background.ConfigBackgroundBasic;
 import boofcv.factory.background.ConfigBackgroundGmm;
+import boofcv.factory.feature.associate.ConfigAssociateGreedy;
 import boofcv.factory.feature.associate.FactoryAssociation;
 import boofcv.factory.feature.detdesc.FactoryDetectDescribe;
 import boofcv.factory.feature.detect.template.FactoryTemplateMatching;
 import boofcv.factory.feature.detect.template.TemplateScoreType;
-import boofcv.factory.feature.tracker.FactoryPointTracker;
 import boofcv.factory.fiducial.ConfigFiducialBinary;
 import boofcv.factory.fiducial.ConfigFiducialImage;
 import boofcv.factory.fiducial.FactoryFiducial;
@@ -54,6 +50,7 @@ import boofcv.factory.flow.FactoryDenseOpticalFlow;
 import boofcv.factory.scene.ClassifierAndSource;
 import boofcv.factory.scene.FactoryImageClassifier;
 import boofcv.factory.segmentation.*;
+import boofcv.factory.tracker.FactoryPointTracker;
 import boofcv.factory.tracker.FactoryTrackerObjectQuad;
 import boofcv.struct.image.*;
 import georegression.geometry.ConvertRotation3D_F64;
@@ -159,22 +156,22 @@ public class Boof {
 	 * @see boofcv.alg.tracker.klt.PyramidKltTracker
 	 *
 	 * @param config Configuration for KLT tracker.  If null defaults will be used.
-	 * @param configExtract Configuration for corner detector.  If null defaults will be used.
+	 * @param configDetect Configuration for feature detector.  If null defaults will be used.
 	 * @param imageType Image type which is processed.  F32 or U8
 	 * @return Point tracker
 	 */
-	public static SimpleTrackerPoints trackerKlt(PkltConfig config,
-												ConfigGeneralDetector configExtract,
-												ImageDataType imageType) {
+	public static SimpleTrackerPoints trackerKlt(ConfigPKlt config,
+												 ConfigPointDetector configDetect,
+												 ImageDataType imageType) {
 		Class inputType = ImageDataType.typeToSingleClass(imageType);
 		Class derivType = GImageDerivativeOps.getDerivativeType(inputType);
 
-		PointTracker tracker = FactoryPointTracker.klt(config, configExtract, inputType, derivType);
+		PointTracker tracker = FactoryPointTracker.klt(config, configDetect, inputType, derivType);
 
 		return new SimpleTrackerPoints(tracker, inputType);
 	}
 
-	public static SimpleTrackerObject trackerTld(ConfigTld config, ImageDataType imageType) {
+	public static SimpleTrackerObject trackerTld(ConfigTrackerTld config, ImageDataType imageType) {
 		Class inputType = ImageDataType.typeToSingleClass(imageType);
 		TrackerObjectQuad tracker = FactoryTrackerObjectQuad.tld(config,inputType);
 		return new SimpleTrackerObject(tracker);
@@ -218,7 +215,7 @@ public class Boof {
 		return new SimpleImageSegmentation(alg);
 	}
 
-	public static SimpleDenseOpticalFlow flowKlt( PkltConfig configKlt, int radius , ImageDataType imageType ) {
+	public static SimpleDenseOpticalFlow flowKlt( ConfigPKlt configKlt, int radius , ImageDataType imageType ) {
 		Class inputType = ImageDataType.typeToSingleClass(imageType);
 		Class derivType = GImageDerivativeOps.getDerivativeType(inputType);
 		DenseOpticalFlow flow = FactoryDenseOpticalFlow.flowKlt(configKlt,radius,inputType,derivType);
@@ -262,20 +259,18 @@ public class Boof {
 	}
 
 	public static SimpleDetectDescribePoint detectSift( ImageDataType imageType ) {
-		if( imageType != ImageDataType.F32 )
-			throw new IllegalArgumentException("Only GrayF32 is supported, e.g. ImageDataType.F32");
-
-		DetectDescribePoint ddp = FactoryDetectDescribe.sift(new ConfigCompleteSift());
+		Class inputType = ImageDataType.typeToSingleClass(imageType);
+		DetectDescribePoint ddp = FactoryDetectDescribe.sift(new ConfigCompleteSift(),inputType);
 
 		return new SimpleDetectDescribePoint(ddp, ImageType.single(GrayF32.class));
 	}
 
-	public static SimpleAssociateDescription associateGreedy( SimpleDetectDescribePoint detector ,
-															  boolean backwardsValidation ) {
+	public static SimpleAssociateDescription associateGreedy(ConfigAssociateGreedy configGreedy,
+															 SimpleDetectDescribePoint detector ) {
 
 		ScoreAssociation score = FactoryAssociation.defaultScore(detector.detectDescribe.getDescriptionType());
 
-		AssociateDescription assoc = FactoryAssociation.greedy(score,Double.MAX_VALUE,backwardsValidation);
+		AssociateDescription assoc = FactoryAssociation.greedy(configGreedy,score);
 
 		return new SimpleAssociateDescription(assoc);
 	}
@@ -369,7 +364,7 @@ public class Boof {
 
 	public static SimpleTemplateMatching templateMatching( TemplateScoreType type ) {
 		if( type == null )
-			type = TemplateScoreType.SUM_DIFF_SQ;
+			type = TemplateScoreType.SUM_SQUARE_ERROR;
 		TemplateMatching<GrayU8> alg =  FactoryTemplateMatching.createMatcher(type,GrayU8.class);
 		return new SimpleTemplateMatching(alg);
 	}

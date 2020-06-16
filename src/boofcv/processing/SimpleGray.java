@@ -18,10 +18,10 @@
 
 package boofcv.processing;
 
+import boofcv.abst.distort.FDistort;
 import boofcv.abst.feature.detect.line.DetectLine;
 import boofcv.abst.filter.derivative.ImageGradient;
 import boofcv.abst.geo.Estimate1ofEpipolar;
-import boofcv.alg.distort.DistortImageOps;
 import boofcv.alg.distort.PointToPixelTransform_F32;
 import boofcv.alg.distort.PointTransformHomography_F32;
 import boofcv.alg.enhance.EnhanceImageOps;
@@ -29,19 +29,14 @@ import boofcv.alg.enhance.GEnhanceImageOps;
 import boofcv.alg.filter.binary.GThresholdImageOps;
 import boofcv.alg.filter.blur.GBlurImageOps;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
-import boofcv.alg.interpolate.InterpolationType;
 import boofcv.alg.misc.GImageStatistics;
 import boofcv.alg.misc.ImageStatistics;
 import boofcv.core.image.GConvertImage;
-import boofcv.core.image.border.BorderType;
-import boofcv.factory.feature.detect.line.ConfigHoughFoot;
-import boofcv.factory.feature.detect.line.ConfigHoughFootSubimage;
-import boofcv.factory.feature.detect.line.ConfigHoughPolar;
-import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
+import boofcv.factory.feature.detect.line.*;
 import boofcv.factory.filter.derivative.FactoryDerivative;
 import boofcv.factory.geo.FactoryMultiView;
 import boofcv.struct.ConfigLength;
-import boofcv.struct.distort.PixelTransform2_F32;
+import boofcv.struct.border.BorderType;
 import boofcv.struct.geo.AssociatedPair;
 import boofcv.struct.image.GrayF32;
 import boofcv.struct.image.GrayI;
@@ -71,11 +66,11 @@ public class SimpleGray<Gray extends ImageGray<Gray>> extends SimpleImage<Gray>{
 	}
 
 	public SimpleGray blurMean( int radius ) {
-		return new SimpleGray((Gray)GBlurImageOps.mean(image, null, radius, null));
+		return new SimpleGray((Gray)GBlurImageOps.mean(image, null, radius, null, null));
 	}
 
 	public SimpleGray blurMedian( int radius ) {
-		return new SimpleGray((Gray)GBlurImageOps.median(image, null, radius));
+		return new SimpleGray((Gray)GBlurImageOps.median(image, null, radius, null));
 	}
 
 	/**
@@ -111,7 +106,7 @@ public class SimpleGray<Gray extends ImageGray<Gray>> extends SimpleImage<Gray>{
 			throw new RuntimeException("Image must be of type GrayU8 to adjust its histogram");
 
 		GrayU8 adjusted = new GrayU8(image.width, image.height);
-		EnhanceImageOps.equalizeLocal((GrayU8) image, radius, adjusted, new int[256], new int[256]);
+		EnhanceImageOps.equalizeLocal((GrayU8) image, radius, adjusted, 256, null);
 
 		return new SimpleGray(adjusted);
 	}
@@ -150,24 +145,24 @@ public class SimpleGray<Gray extends ImageGray<Gray>> extends SimpleImage<Gray>{
 		return new SimpleGray(adjusted);
 	}
 
-	public List<LineParametric2D_F32> linesHoughPolar( ConfigHoughPolar config ) {
+	public List<LineParametric2D_F32> linesHoughPolar(ConfigHoughGradient configHough, ConfigParamPolar configPolar) {
 		Class inputType = image.getClass();
 		Class derivType = GImageDerivativeOps.getDerivativeType(inputType);
-		DetectLine detector = FactoryDetectLineAlgs.houghPolar(config,inputType,derivType);
+		DetectLine detector = FactoryDetectLine.houghLinePolar(configHough,configPolar,derivType);
 		return detector.detect(image);
 	}
 
-	public List<LineParametric2D_F32> linesHoughFoot( ConfigHoughFoot config ) {
+	public List<LineParametric2D_F32> linesHoughFoot(ConfigHoughGradient configHough, ConfigParamFoot configFoot) {
 		Class inputType = image.getClass();
 		Class derivType = GImageDerivativeOps.getDerivativeType(inputType);
-		DetectLine detector = FactoryDetectLineAlgs.houghFoot(config, inputType, derivType);
+		DetectLine detector = FactoryDetectLine.houghLineFoot(configHough, configFoot, derivType);
 		return detector.detect(image);
 	}
 
-	public List<LineParametric2D_F32> linesHoughFootSub( ConfigHoughFootSubimage config ) {
+	public List<LineParametric2D_F32> linesHoughFootSub(ConfigHoughFootSubimage configFoot ) {
 		Class inputType = image.getClass();
 		Class derivType = GImageDerivativeOps.getDerivativeType(inputType);
-		DetectLine detector = FactoryDetectLineAlgs.houghFootSub(config,inputType,derivType);
+		DetectLine detector = FactoryDetectLine.houghLineFootSub(configFoot,derivType);
 		return detector.detect(image);
 	}
 
@@ -204,10 +199,9 @@ public class SimpleGray<Gray extends ImageGray<Gray>> extends SimpleImage<Gray>{
 
 		// Create the transform for distorting the image
 		PointTransformHomography_F32 homography = new PointTransformHomography_F32(H32);
-		PixelTransform2_F32 pixelTransform = new PointToPixelTransform_F32(homography);
 
 		// Apply distortion and show the results
-		DistortImageOps.distortSingle(image, output, pixelTransform, InterpolationType.BILINEAR, BorderType.SKIP);
+		new FDistort(image,output).transform(new PointToPixelTransform_F32(homography)).border(BorderType.SKIP).apply();
 
 		return new SimpleGray(output);
 	}
@@ -245,10 +239,10 @@ public class SimpleGray<Gray extends ImageGray<Gray>> extends SimpleImage<Gray>{
 	/**
 	 * @see GThresholdImageOps#localMean
 	 */
-	public SimpleBinary thresholdMean( int Width, double bias, boolean down ) {
+	public SimpleBinary thresholdMean( int width, double bias, boolean down ) {
 		ConfigLength config = new ConfigLength();
-		config.length = Width;
-		return new SimpleBinary(GThresholdImageOps.localMean(image, null, config, bias, down, null, null));
+		config.length = width;
+		return new SimpleBinary(GThresholdImageOps.localMean(image, null, config, bias, down, null,null, null));
 	}
 
 	/**

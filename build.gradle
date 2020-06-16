@@ -3,8 +3,10 @@ apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'maven'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 repositories {
     mavenCentral()
@@ -17,7 +19,7 @@ repositories {
 
 dependencies {
     compileOnly group: 'org.processing', name: 'core', version: '3.3.7'
-    compile group: 'org.boofcv', name: 'boofcv-core', version: '0.31'
+    compile group: 'org.boofcv', name: 'boofcv-core', version: '0.36'
 }
 
 test {
@@ -50,12 +52,12 @@ sourceSets {
 
 task dependenciesJar(type: Jar, dependsOn:jar) {
 
-    dependsOn configurations.runtime
-    from {
-        configurations.runtime.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
+    dependsOn configurations.runtimeClasspath
+
+    from { (configurations.runtimeClasspath-configurations.processing).findAll { it.name.endsWith('jar') }.
+            collect { zipTree(it) } } {  exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA' }
+
+    outputs.upToDateWhen { false }
 
     destinationDir = file('./')
     archiveName = 'boofcv_dependencies.jar'
@@ -65,7 +67,7 @@ task processingJar(type: Jar, dependsOn:jar ) {
 
     dependsOn dependenciesJar
 
-    from files(sourceSets.main.output.classesDir)
+//    from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)
 
     destinationDir = file('./')
@@ -140,6 +142,7 @@ task processingZip( type: Zip, dependsOn:processingDirectory) {
     archiveName = 'boofcv_processing.zip'
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.4'
+wrapper {
+    distributionType = Wrapper.DistributionType.BIN
+    gradleVersion = '6.4.1'
 }
