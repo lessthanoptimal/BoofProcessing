@@ -4,10 +4,11 @@ import boofcv.processing.*;
 import boofcv.struct.image.*;
 import georegression.struct.point.*;
 import java.util.*;
+import boofcv.struct.feature.*;
 import boofcv.factory.feature.detect.template.TemplateScoreType;
 
 PImage input;
-List<Point2D_I32> found;
+List<Match> found;
 int regionWidth;
 int regionHeight;
 
@@ -51,7 +52,7 @@ void draw() {
   // Draw the solutions
   int w = regionWidth;
   int h = regionHeight;
-  for ( Point2D_I32 p : found ) {
+  for ( Match p : found ) {
     beginShape();
     vertex( p.x, p.y );
     vertex( p.x+w, p.y );

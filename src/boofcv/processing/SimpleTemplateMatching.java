@@ -30,7 +30,7 @@ public class SimpleTemplateMatching {
         matcher.setImage(ginput);
     }
 
-    public List<Point2D_I32> detect( PImage template , int maxMatches ) {
+    public List<Match> detect( PImage template , int maxMatches ) {
         ConvertProcessing.convertFromRGB(template,gtemplate);
 
 //        System.out.println("width="+ginput.width+"x"+ginput.height+"  width="+gtemplate.width+"x"+gtemplate.height);
@@ -42,7 +42,7 @@ public class SimpleTemplateMatching {
         return extractResults();
     }
 
-    public List<Point2D_I32> detect(PImage template , SimpleBinary mask , int maxMatches ) {
+    public List<Match> detect(PImage template , SimpleBinary mask , int maxMatches ) {
         ConvertProcessing.convert_RGB_U8(template,gtemplate);
         matcher.setTemplate(gtemplate,mask.image, maxMatches);
 
@@ -55,15 +55,19 @@ public class SimpleTemplateMatching {
         return extractResults();
     }
 
-    private List<Point2D_I32> extractResults() {
+    private List<Match> extractResults() {
         matcher.process();
         List<Match> matches = matcher.getResults().toList();
 
 //        System.out.println("total found "+matches.size());
 
-        List<Point2D_I32> output = new ArrayList<>();
+        List<Match> output = new ArrayList<>();
         for (int i = 0; i < matches.size(); i++) {
-            output.add(matches.get(i).copy());
+            Match orig = matches.get(i);
+            Match copy = new Match();
+            copy.set(orig);
+            copy.score = orig.score;
+            output.add(copy);
         }
 
         return output;

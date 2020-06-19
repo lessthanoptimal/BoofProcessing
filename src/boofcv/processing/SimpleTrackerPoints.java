@@ -84,6 +84,8 @@ public class SimpleTrackerPoints {
 		return list.get(index).featureId;
 	}
 
+	public int getTrackAge( int index ) { return (int)(tracker.getFrameID()-list.get(index).spawnFrameID); }
+
 	public boolean dropTrack( int index ) {
 		return tracker.dropTrack(list.get(index));
 	}
