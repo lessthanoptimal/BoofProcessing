@@ -20,7 +20,7 @@ void setup() {
   SimpleBinary bmask = Boof.gray(mask,ImageDataType.U8).threshold(125,false);
 
   // Create the template matching class
-  SimpleTemplateMatching matching = Boof.templateMatching(TemplateScoreType.SUM_DIFF_SQ);
+  SimpleTemplateMatching matching = Boof.templateMatching(TemplateScoreType.SUM_SQUARE_ERROR);
 
   // Tell it which image to search inside of
   matching.setInput(input);

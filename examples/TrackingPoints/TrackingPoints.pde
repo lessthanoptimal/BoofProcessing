@@ -17,9 +17,9 @@ void setup() {
   initializeCamera(320,240);
   surface.setSize(cam.width, cam.height);
 
-  ConfigGeneralDetector confDetector = new ConfigGeneralDetector();
-  confDetector.radius = 4;
-  confDetector.threshold = 2;
+  ConfigPointDetector confDetector = new ConfigPointDetector();
+  confDetector.general.radius = 4;
+  confDetector.general.threshold = 2;
   tracker = Boof.trackerKlt(null,confDetector,ImageDataType.F32);
 }
 

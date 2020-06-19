@@ -20,11 +20,16 @@ void setup() {
   // Convert the image into a simplified BoofCV data type
   SimpleGray gray = Boof.gray(input,ImageDataType.F32);
 
+  // Blur smooths out gradient and improves results
+  SimpleGray blurred = gray.blurGaussian(0,5);
+
   // Find lines in the image using different techniques
-  int maxLines = 10;
-  linesPolar = gray.linesHoughPolar(new ConfigHoughPolar(50,maxLines));
-  linesFoot = gray.linesHoughFoot(new ConfigHoughFoot(maxLines));
-  linesFootSub = gray.linesHoughFootSub(new ConfigHoughFootSubimage(maxLines));
+  ConfigHoughGradient configHough = new ConfigHoughGradient();
+  //configHough.thresholdEdge = 200;
+  configHough.maxLines = 10;
+  linesPolar = blurred.linesHoughPolar(configHough, null);
+  linesFoot = blurred.linesHoughFoot(configHough, null);
+  linesFootSub = blurred.linesHoughFootSub(new ConfigHoughFootSubimage(configHough.maxLines));
 
   surface.setSize(input.width, input.height);
 }

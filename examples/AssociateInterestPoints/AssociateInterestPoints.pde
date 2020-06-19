@@ -6,6 +6,7 @@ import boofcv.struct.image.*;
 import boofcv.struct.feature.*;
 import georegression.struct.point.*;
 import java.util.*;
+import boofcv.factory.feature.associate.ConfigAssociateGreedy;
 
 PImage input0;
 PImage input1;
@@ -31,7 +32,10 @@ void setup() {
 
   // Only greedy association is provided in the simple interface.  Other options are available
   // in BoofCV, such as random forest.
-  SimpleAssociateDescription assoc = Boof.associateGreedy(ddp, true);
+  ConfigAssociateGreedy configAssociate = new ConfigAssociateGreedy();
+  configAssociate.forwardsBackwards = true;
+  configAssociate.scoreRatioThreshold = 0.75;
+  SimpleAssociateDescription assoc = Boof.associateGreedy(configAssociate, ddp);
 
   // Find the features
   ddp.process(input0);

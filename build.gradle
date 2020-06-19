@@ -54,7 +54,7 @@ task dependenciesJar(type: Jar, dependsOn:jar) {
 
     dependsOn configurations.runtimeClasspath
 
-    from { (configurations.runtimeClasspath-configurations.processing).findAll { it.name.endsWith('jar') }.
+    from { (configurations.runtimeClasspath).findAll { it.name.endsWith('jar') }.
             collect { zipTree(it) } } {  exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA' }
 
     outputs.upToDateWhen { false }
@@ -67,7 +67,7 @@ task processingJar(type: Jar, dependsOn:jar ) {
 
     dependsOn dependenciesJar
 
-//    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.classesDirs)
     from files(sourceSets.main.output.resourcesDir)
 
     destinationDir = file('./')
