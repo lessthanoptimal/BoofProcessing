@@ -333,6 +333,10 @@ public class SimpleGray<Gray extends ImageGray<Gray>> extends SimpleImage<Gray>{
 		return gradient(FactoryDerivative.three(image.getClass(), null));
 	}
 
+	public SimpleGradient gradientScharr() {
+		return gradient(FactoryDerivative.scharr(image.getClass(), null));
+	}
+
 	public SimpleGradient gradientTwo0() {
 		return gradient(FactoryDerivative.two0(image.getClass(), null));
 	}

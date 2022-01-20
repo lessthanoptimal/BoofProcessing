@@ -27,7 +27,7 @@ import processing.core.PImage;
  *
  * @author Peter Abeles
  */
-public class SimpleGradient<T extends ImageBase> {
+public class SimpleGradient<T extends ImageBase<T>> {
 	public T dx;
 	public T dy;
 

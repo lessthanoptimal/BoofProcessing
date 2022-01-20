@@ -36,9 +36,7 @@ import boofcv.factory.background.ConfigBackgroundGmm;
 import boofcv.factory.feature.associate.ConfigAssociateGreedy;
 import boofcv.factory.feature.associate.FactoryAssociation;
 import boofcv.factory.feature.detdesc.FactoryDetectDescribe;
-import boofcv.factory.fiducial.ConfigFiducialBinary;
-import boofcv.factory.fiducial.ConfigFiducialImage;
-import boofcv.factory.fiducial.FactoryFiducial;
+import boofcv.factory.fiducial.*;
 import boofcv.factory.filter.binary.ConfigThreshold;
 import boofcv.factory.filter.binary.ThresholdType;
 import boofcv.factory.flow.ConfigHornSchunck;
@@ -65,6 +63,7 @@ import processing.core.PImage;
  *
  * @author Peter Abeles
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class Boof {
 
 	/**
@@ -294,6 +293,20 @@ public class Boof {
 	}
 
 	/**
+	 * Create a square-hamming based detector. E.g. ARUCO and APRIL Tag
+	 *
+	 * @param dict Which hamming dictionary to use
+	 */
+	public static SimpleFiducial fiducialSquareHamming(HammingDictionary dict ) {
+		var configMarker = new ConfigHammingMarker();
+		configMarker.dictionary = dict;
+		var configDet = new ConfigFiducialHammingDetector();
+		configDet.configThreshold.setTo(ConfigThreshold.local(ThresholdType.LOCAL_MEAN,15));
+
+		return new SimpleFiducial(FactoryFiducial.squareHamming(configMarker, configDet, GrayU8.class));
+	}
+
+	/**
 	 * Creates a square-binary fiducial detector
 	 *
 	 * @param width Width of square in world units
@@ -312,6 +325,20 @@ public class Boof {
 	public static SimpleFiducialSquareImage fiducialSquareImage( int threshold ) {
 		return new SimpleFiducialSquareImage(FactoryFiducial.squareImage(new ConfigFiducialImage(),
 				ConfigThreshold.fixed(threshold), GrayU8.class));
+	}
+
+	/**
+	 * Create a square-hamming based detector. E.g. ARUCO and APRIL Tag
+	 * @param dict Which hamming dictionary to use
+	 * @param threshold Binary threshold
+	 */
+	public static SimpleFiducial fiducialSquareHamming(HammingDictionary dict, int threshold ) {
+		var configMarker = new ConfigHammingMarker();
+		configMarker.dictionary = dict;
+		var configDet = new ConfigFiducialHammingDetector();
+		configDet.configThreshold.setTo(ConfigThreshold.fixed(threshold));
+
+		return new SimpleFiducial(FactoryFiducial.squareHamming(configMarker, configDet, GrayU8.class));
 	}
 
 	/**
@@ -352,6 +379,14 @@ public class Boof {
 
 	public static PImage renderQR( String message , int pixelPerModule ) {
 		return SimpleQrCode.generate(message,pixelPerModule);
+	}
+
+	public static SimpleMicroQrCode detectMicroQR() {
+		return new SimpleMicroQrCode();
+	}
+
+	public static PImage renderMicroQR( String message , int pixelPerModule ) {
+		return SimpleMicroQrCode.generate(message,pixelPerModule);
 	}
 
 	public static SimpleMotionDetection motionDetector( ConfigBackgroundGmm config ) {

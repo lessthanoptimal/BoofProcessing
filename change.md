@@ -1,7 +1,16 @@
+### Version 0.40
+
+* Updated to BoofCV 0.40
+* Added hamming markers
+* Added Micro QR Code
+* Added Scharr gradient
+* TODO random dot markers
+* TODO Three-View Stereo Cloud
+* TODO Scene Reconstruction
+
 ### Version 0.36
 
 * Updated for BoofCV 0.36
-* TODO Random Dot Markers
 
 ### Version 0.31
 
