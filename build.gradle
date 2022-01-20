@@ -1,11 +1,8 @@
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'java-library'
+
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain { languageVersion = JavaLanguageVersion.of(11) }
 }
 
 repositories {
@@ -19,7 +16,7 @@ repositories {
 
 dependencies {
     compileOnly group: 'org.processing', name: 'core', version: '3.3.7'
-    compile group: 'org.boofcv', name: 'boofcv-core', version: '0.36'
+    api group: 'org.boofcv', name: 'boofcv-core', version: '0.40'
 }
 
 test {
@@ -29,49 +26,30 @@ test {
 
 sourceSets {
     main {
-        java {
-            srcDir 'src'
-        }
-        resources {
-            srcDir 'resources/src'
-        }
-    }
-
-    test {
-        java {
-            srcDir 'test'
-            srcDir 'generate'
-            srcDir 'benchmark'
-        }
-        resources {
-            srcDir 'resources/test'
-        }
+        java { srcDir 'src'  }
     }
 }
 
 
 task dependenciesJar(type: Jar, dependsOn:jar) {
-
     dependsOn configurations.runtimeClasspath
 
     from { (configurations.runtimeClasspath).findAll { it.name.endsWith('jar') }.
             collect { zipTree(it) } } {  exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA' }
 
     outputs.upToDateWhen { false }
-
-    destinationDir = file('./')
-    archiveName = 'boofcv_dependencies.jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveFile.set(file('boofcv_dependencies.jar'))
 }
 
 task processingJar(type: Jar, dependsOn:jar ) {
-
     dependsOn dependenciesJar
 
     from files(sourceSets.main.output.classesDirs)
     from files(sourceSets.main.output.resourcesDir)
 
-    destinationDir = file('./')
-    archiveName = 'boofcv_processing.jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveFile.set(file('boofcv_processing.jar'))
 }
 
 task processingJavaDoc(type: Javadoc) {
@@ -144,5 +122,5 @@ task processingZip( type: Zip, dependsOn:processingDirectory) {
 
 wrapper {
     distributionType = Wrapper.DistributionType.BIN
-    gradleVersion = '6.4.1'
+    gradleVersion = '7.3.3'
 }

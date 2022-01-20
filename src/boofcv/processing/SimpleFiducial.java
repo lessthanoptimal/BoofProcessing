@@ -63,7 +63,7 @@ public class SimpleFiducial {
 	}
 
 	public void guessCrappyIntrinsic( int width , int height ) {
-		setIntrinsic(PerspectiveOps.createIntrinsic(width,height,70));
+		setIntrinsic(PerspectiveOps.createIntrinsic(width,height,70,null));
 	}
 
 	public List<FiducialFound> detect( PImage image ) {

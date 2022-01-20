@@ -26,18 +26,16 @@ import boofcv.abst.feature.detect.interest.ConfigPointDetector;
 import boofcv.abst.flow.DenseOpticalFlow;
 import boofcv.abst.segmentation.ImageSuperpixels;
 import boofcv.abst.tracker.*;
-import boofcv.alg.feature.detect.template.TemplateMatching;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
 import boofcv.alg.flow.ConfigBroxWarping;
+import boofcv.alg.template.TemplateMatching;
 import boofcv.alg.tracker.klt.ConfigPKlt;
-import boofcv.alg.tracker.sfot.SfotConfig;
+import boofcv.alg.tracker.sfot.ConfigSfot;
 import boofcv.factory.background.ConfigBackgroundBasic;
 import boofcv.factory.background.ConfigBackgroundGmm;
 import boofcv.factory.feature.associate.ConfigAssociateGreedy;
 import boofcv.factory.feature.associate.FactoryAssociation;
 import boofcv.factory.feature.detdesc.FactoryDetectDescribe;
-import boofcv.factory.feature.detect.template.FactoryTemplateMatching;
-import boofcv.factory.feature.detect.template.TemplateScoreType;
 import boofcv.factory.fiducial.ConfigFiducialBinary;
 import boofcv.factory.fiducial.ConfigFiducialImage;
 import boofcv.factory.fiducial.FactoryFiducial;
@@ -50,6 +48,8 @@ import boofcv.factory.flow.FactoryDenseOpticalFlow;
 import boofcv.factory.scene.ClassifierAndSource;
 import boofcv.factory.scene.FactoryImageClassifier;
 import boofcv.factory.segmentation.*;
+import boofcv.factory.template.FactoryTemplateMatching;
+import boofcv.factory.template.TemplateScoreType;
 import boofcv.factory.tracker.FactoryPointTracker;
 import boofcv.factory.tracker.FactoryTrackerObjectQuad;
 import boofcv.struct.image.*;
@@ -188,7 +188,7 @@ public class Boof {
 		return new SimpleTrackerObject(tracker);
 	}
 
-	public static SimpleTrackerObject trackerSparseFlow(SfotConfig config, ImageDataType imageType) {
+	public static SimpleTrackerObject trackerSparseFlow(ConfigSfot config, ImageDataType imageType) {
 		Class inputType = ImageDataType.typeToSingleClass(imageType);
 		Class derivType = GImageDerivativeOps.getDerivativeType(inputType);
 		TrackerObjectQuad tracker = FactoryTrackerObjectQuad.sparseFlow(config, inputType, derivType);
@@ -365,7 +365,7 @@ public class Boof {
 	public static SimpleTemplateMatching templateMatching( TemplateScoreType type ) {
 		if( type == null )
 			type = TemplateScoreType.SUM_SQUARE_ERROR;
-		TemplateMatching<GrayU8> alg =  FactoryTemplateMatching.createMatcher(type,GrayU8.class);
+		TemplateMatching<GrayU8> alg = FactoryTemplateMatching.createMatcher(type,GrayU8.class);
 		return new SimpleTemplateMatching(alg);
 	}
 }

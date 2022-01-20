@@ -1,9 +1,8 @@
 package boofcv.processing;
 
-import boofcv.alg.feature.detect.template.TemplateMatching;
+import boofcv.alg.template.TemplateMatching;
 import boofcv.struct.feature.Match;
 import boofcv.struct.image.GrayU8;
-import georegression.struct.point.Point2D_I32;
 import processing.core.PImage;
 
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public class SimpleTemplateMatching {
         for (int i = 0; i < matches.size(); i++) {
             Match orig = matches.get(i);
             Match copy = new Match();
-            copy.set(orig);
+            copy.setTo(orig);
             copy.score = orig.score;
             output.add(copy);
         }

@@ -55,10 +55,10 @@ public class SimpleTrackerObject {
 	public boolean initialize( PImage image , double x0 , double y0 , double x1 , double y1 )
 	{
 		Quadrilateral_F64 q = new Quadrilateral_F64();
-		q.a.set(x0, y0);
-		q.b.set(x1, y0);
-		q.c.set(x1, y1);
-		q.d.set(x0, y1);
+		q.a.setTo(x0, y0);
+		q.b.setTo(x1, y0);
+		q.c.setTo(x1, y1);
+		q.d.setTo(x0, y1);
 
 		return initialize(image,q);
 	}

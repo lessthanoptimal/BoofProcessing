@@ -50,7 +50,7 @@ public class EquirectangularToPinhole {
      * @param hfov horizontal FOV in degrees
      */
     public void setIntrinsic( int width , int height , double hfov ) {
-        setIntrinsic(PerspectiveOps.createIntrinsic(width,height,hfov));
+        setIntrinsic(PerspectiveOps.createIntrinsic(width,height,hfov, null));
     }
 
     public void setIntrinsic( CameraPinhole intrinsic ) {
@@ -63,7 +63,7 @@ public class EquirectangularToPinhole {
     public void setOrientation(DMatrixRMaj R ) {
         FMatrixRMaj R32 = new FMatrixRMaj(3,3);
         ConvertMatrixData.convert(R,R32);
-        equiToPinhole.getRotation().set(R32);
+        equiToPinhole.getRotation().setTo(R32);
     }
 
     public void setEquirectangular(PImage image ) {

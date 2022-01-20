@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author Peter Abeles
  */
-public class SimpleDetectDescribePoint<T extends ImageBase<T>, Desc extends TupleDesc> {
+public class SimpleDetectDescribePoint<T extends ImageBase<T>, Desc extends TupleDesc<Desc>> {
 
 	DetectDescribePoint<T,Desc> detectDescribe;
 
